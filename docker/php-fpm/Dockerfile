@@ -60,4 +60,4 @@ RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/sh -g www www
 USER www
 
-WORKDIR /var/www
+WORKDIR /var/www/app
