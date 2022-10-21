@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\BotController;
+use App\Http\Controllers\Front\HomeController;
 use Illuminate\Support\Facades\Route;
+use TCG\Voyager\Facades\Voyager;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
+Route::get('bot/setWebhook', [BotController::class, 'setWebhook'])->name('bot.setWebhook');
+Route::post('webhook', [BotController::class, 'webhook'])->name('bot.webhook');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
