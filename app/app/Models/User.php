@@ -21,6 +21,7 @@ class User extends \TCG\Voyager\Models\User
         'name',
         'email',
         'password',
+        'telegram_id',
     ];
 
     /**
@@ -41,4 +42,9 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sessions()
+    {
+        return $this->hasMany(Session::class);
+    }
 }

@@ -6,19 +6,17 @@ use Illuminate\Support\Facades\Http;
 
 class TelegramBotService
 {
-    private const TELEGRAM_API_URL = 'https://api.telegram.org/bot';
+    private const TELEGRAM_API_URL = "https://api.telegram.org/bot";
 
-    public function setWebhook(string $api_token, string $url): bool
+    public function setWebhook(string $api_token, string $url): array
     {
-        return Http::get(self::TELEGRAM_API_URL . $api_token . '/setWebhook', [
-            'url' => $url,
-        ])->ok();
+        return Http::get(self::TELEGRAM_API_URL . $api_token . "/setWebhook", [
+            "url" => $url,
+        ])->json();
     }
 
-    public function getWebhookInfoUrl(string $api_token): string
+    public function getWebhookInfo(string $api_token): array
     {
-        $webhook_info = Http::post(self::TELEGRAM_API_URL . $api_token . '/getWebhookInfo')->json();
-
-        return $webhook_info['ok'] ? $webhook_info['result']['url'] : '';
+        return Http::post(self::TELEGRAM_API_URL . $api_token . "/getWebhookInfo")->json();
     }
 }
