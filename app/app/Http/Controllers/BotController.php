@@ -26,11 +26,13 @@ class BotController extends Controller
 
     public function webhook(Request $request)
     {
-        $message          = $request->input("message.text");
-        $session_id       = str_replace("/start auth", "", $message);
-        $user_username    = $request->input("message.from.username");
-        $user_telegram_id = $request->input("message.from.id");
-        $user             = User::query()->where("telegram_id", $user_telegram_id)->first();
+        $message            = $request->input("message.text");
+        $session_id         = str_replace("/start auth", "", $message);
+        $user_telegram_name = $request->input("message.from.username");
+        $user_telegram_id   = $request->input("message.from.id");
+        $user_firstname     = $request->input("message.from.firstname");
+        $user_lastname      = $request->input("message.from.lastname");
+        $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($user) {
             Auth::login($user);
@@ -38,10 +40,11 @@ class BotController extends Controller
             $user->sessions()->where("id", "!=", $session_id)->delete();
         } else {
             $new_user = User::query()->create([
-                "name"        => $user_username,
-                "email"       => Str::random(15) . "@" . Str::random(5) . ".com",
-                "password"    => Hash::make(Str::random(20)),
-                "telegram_id" => $user_telegram_id,
+                "name"          => $user_firstname . " " . $user_lastname,
+                "email"         => Str::random(15) . "@" . Str::random(5) . ".com",
+                "password"      => Hash::make(Str::random(20)),
+                "telegram_id"   => $user_telegram_id,
+                "telegram_name" => $user_telegram_name,
             ]);
 
             Auth::login($new_user);
