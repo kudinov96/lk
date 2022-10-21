@@ -16,11 +16,12 @@ use TCG\Voyager\Facades\Voyager;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get("/", [HomeController::class, "index"]);
 
-Route::get('bot/setWebhook', [BotController::class, 'setWebhook'])->name('bot.setWebhook');
-Route::post('webhook', [BotController::class, 'webhook'])->name('bot.webhook');
+Route::get("bot/setWebhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
+Route::get("bot/getWebhookInfo", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
+Route::post("bot/webhook", [BotController::class, "webhook"])->name("bot.webhook");
 
-Route::group(['prefix' => 'admin'], function () {
+Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
 });
