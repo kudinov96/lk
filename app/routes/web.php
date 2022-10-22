@@ -18,9 +18,19 @@ use TCG\Voyager\Facades\Voyager;
 
 Route::get("/", [HomeController::class, "index"]);
 
-Route::get("bot/setWebhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
-Route::get("bot/getWebhookInfo", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
-Route::post("bot/webhook", [BotController::class, "webhook"])->name("bot.webhook");
+Route::group(["prefix" => "bot"], function(){
+    Route::get("setWebhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
+    Route::get("getWebhookInfo", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
+    Route::post("webhook", [BotController::class, "webhook"])->name("bot.webhook");
+});
+
+Route::post("ajax/checkAuth", function() {
+    return auth()->user() ? 1 : 0;
+})->name("checkAuth");
+
+Route::get("profile", function() {
+    return "Profile page";
+})->name("profile");
 
 Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
