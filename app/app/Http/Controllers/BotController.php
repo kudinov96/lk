@@ -24,14 +24,15 @@ class BotController extends Controller
         return $telegramBotService->getWebhookInfo(config("bot.bot_api_token"));
     }
 
-    public function webhook(Request $request)
+    public function webhook(Request $request, TelegramBotService $telegramBotService)
     {
         $message            = $request->input("message.text");
         $session_id         = str_replace("/start auth", "", $message);
+        $chat_id            = $request->input("message.chat.id");
         $user_telegram_name = $request->input("message.from.username");
         $user_telegram_id   = $request->input("message.from.id");
-        $user_firstname     = $request->input("message.from.firstname");
-        $user_lastname      = $request->input("message.from.lastname");
+        $user_firstname     = $request->input("message.from.first_name") ?? "";
+        $user_lastname      = $request->input("message.from.last_name") ?? "";
         $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($user) {
@@ -50,5 +51,12 @@ class BotController extends Controller
             Auth::login($new_user);
             Session::setId($session_id);
         }
+
+        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("profile") . "\">личном кабинете</a>";
+        $telegramBotService->sendMessage(
+            api_token: config("bot.bot_api_token"),
+            chat_id: $chat_id,
+            text: $text,
+        );
     }
 }

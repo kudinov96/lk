@@ -19,4 +19,13 @@ class TelegramBotService
     {
         return Http::post(self::TELEGRAM_API_URL . $api_token . "/getWebhookInfo")->json();
     }
+
+    public function sendMessage(string $api_token, int $chat_id, string $text): void
+    {
+        Http::post(self::TELEGRAM_API_URL . $api_token . '/sendMessage', [
+            'chat_id' => $chat_id,
+            'text' => $text,
+            'parse_mode' => 'HTML',
+        ]);
+    }
 }
