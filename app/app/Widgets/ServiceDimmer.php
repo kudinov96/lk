@@ -24,10 +24,20 @@ class ServiceDimmer extends BaseDimmer
         return view('voyager::dimmer', array_merge($this->config, [
             'icon'   => 'voyager-credit-cards',
             'title'  => "Подписки и услуги",
-            'text'   => "Редактирование подписок и услуг",
-            'button' => [
-                'text' => "Перейти",
-                'link' => null,
+            'text'   => "Редактирование подписок, курсов и услуг",
+            'buttons' => [
+                [
+                    'text' => "Подписки",
+                    'link' => null,
+                ],
+                [
+                    'text' => "Курсы",
+                    'link' => route("voyager.courses.index"),
+                ],
+                [
+                    'text' => "Услуги",
+                    'link' => route("voyager.services.index"),
+                ],
             ],
             'image' => voyager_asset('images/widget-backgrounds/02.jpg'),
         ]));
