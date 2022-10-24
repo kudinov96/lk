@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\AllServicesController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
 use Illuminate\Support\Facades\Route;
