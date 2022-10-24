@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("services", function (Blueprint $table) {
+        Schema::create("graph_category", function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->integer("price");
-            $table->integer("price_discount")->nullable();
-            $table->text("content");
-
+            $table->unsignedBigInteger("parent_id")->nullable();
+            $table->string("color_title")->nullable();
+            $table->string("color_border")->nullable();
             $table->timestamps();
+
+            $table->foreign("parent_id")->references("id")->on("graph_category")->onDelete("set null");
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("services");
+        Schema::dropIfExists('graph_category');
     }
 };

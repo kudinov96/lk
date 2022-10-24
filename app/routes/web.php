@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\GraphsController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -34,4 +35,6 @@ Route::get("profile", function() {
 
 Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
+
+    Route::get("graphs", [GraphsController::class, "index"])->name("voyager.graph.index");
 });
