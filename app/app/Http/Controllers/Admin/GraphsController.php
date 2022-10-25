@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\IntervalCodeEnum;
 use App\Http\Controllers\Controller;
 use App\Models\GraphCategory;
 
@@ -14,6 +15,8 @@ class GraphsController extends Controller
             ->with("subcategories", "tools")
             ->get();
 
-        return response()->view("admin.graphs", compact("graphCategories"));
+        $intervalCodes = IntervalCodeEnum::getArray();
+
+        return response()->view("admin.graphs", compact("graphCategories", "intervalCodes"));
     }
 }

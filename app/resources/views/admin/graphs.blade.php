@@ -2,6 +2,10 @@
 
 @section('page_title', 'Графики')
 
+@section('css')
+    @vite('resources/scss/admin/admin.scss')
+@stop
+
 @section('page_header')
     <h1 class="page-title">
         <i class="voyager-pie-graph"></i>Графики
@@ -52,6 +56,19 @@
                                                                             </div>
                                                                             <div class="dd-handle">
                                                                                 <span>{{ $tool->title }}</span> <small class="url">Tool</small>
+                                                                            </div>
+                                                                            <div class="dd-tools">
+                                                                                @foreach($intervalCodes as $key => $code)
+                                                                                    <div class="dd-tools__item">
+                                                                                        <input type="text" name="interval" value="{{ $tool->data[\App\Enums\IntervalCodeEnum::from($key)->value]["interval"] ?? "" }}" class="form-control dd-tools__item-interval">
+                                                                                        <select name="interval_code" class="form-control dd-tools__item-interval-code">
+                                                                                            @foreach($intervalCodes as $k => $v)
+                                                                                                <option value="<?php echo $v; ?>" @if($k === \App\Enums\IntervalCodeEnum::from($key)->value) selected @endif><?php echo $v; ?></option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                        <input type="text" name="url" value="{{ $tool->data[\App\Enums\IntervalCodeEnum::from($key)->value]["url"] ?? "" }}" class="form-control dd-tools__item-url" placeholder="Url">
+                                                                                    </div>
+                                                                                @endforeach
                                                                             </div>
                                                                         </li>
                                                                     @endforeach
