@@ -22,7 +22,7 @@
                             <div class="dd">
                                 <ol class="dd-list dd-list_categories">
                                     @foreach($graphCategories as $graphCategory)
-                                        <li class="dd-item" data-id="category-{{ $graphCategory->id }}" data-type="type1">
+                                        <li class="dd-item" data-id="category-{{ $graphCategory->id }}" data-type="category">
                                             <div class="pull-right item_actions">
                                                 <div class="btn btn-sm btn-danger pull-right delete" data-id="{{ $graphCategory->id }}">
                                                     <i class="voyager-trash"></i> Удалить
@@ -33,9 +33,9 @@
                                             </div>
 
                                             @if($graphCategory->subcategories->count() > 0)
-                                                <ol class="dd-list dd-list_subcategories">
+                                                <ol class="dd-list">
                                                     @foreach($graphCategory->subcategories as $subcategory)
-                                                        <li class="dd-item" data-id="subcategory-{{ $subcategory->id }}" data-type="type2">
+                                                        <li class="dd-item" data-id="subcategory-{{ $subcategory->id }}" data-type="subcategory">
                                                             <div class="pull-right item_actions">
                                                                 <div class="btn btn-sm btn-danger pull-right delete" data-id="{{ $subcategory->id }}">
                                                                     <i class="voyager-trash"></i> Удалить
@@ -46,9 +46,9 @@
                                                             </div>
 
                                                             @if($subcategory->tools->count() > 0)
-                                                                <ol class="dd-list dd-list_tools">
+                                                                <ol class="dd-list">
                                                                     @foreach($subcategory->tools as $tool)
-                                                                        <li class="dd-item" data-id="tool-{{ $tool->id }}" data-type="type3">
+                                                                        <li class="dd-item" data-id="tool-{{ $tool->id }}" data-type="tool">
                                                                             <div class="pull-right item_actions">
                                                                                 <div class="btn btn-sm btn-danger pull-right delete" data-id="{{ $tool->id }}">
                                                                                     <i class="voyager-trash"></i> Удалить
@@ -101,23 +101,24 @@
                 collapseBtnHTML: '',
                 maxDepth: 3,
                 beforeDragStop: function (l, e, p) {
-                    let type = $(e).data('type');
+                    let type        = $(e).data('type');
+                    let parent_type = $(p).closest(".dd-item").data('type');
 
                     switch (type) {
-                        case 'type1':
-                            if ($(p).hasClass('dd-list_subcategories') || $(p).hasClass('dd-list_tools')) {
+                        case 'category':
+                            if (parent_type === "category" || parent_type === "subcategory" || parent_type === "tool") {
                                 return false;
                             }
                             break;
 
-                        case 'type2':
-                            if ($(p).hasClass('dd-list_categories') || $(p).hasClass('dd-list_subcategories') || $(p).hasClass('dd-list_tools')) {
+                        case 'subcategory':
+                            if (parent_type === "category" || parent_type === "subcategory" || parent_type === "tool" || $(p).hasClass("dd-list_categories")) {
                                 return false;
                             }
                             break;
 
-                        case 'type3':
-                            if ($(p).hasClass('dd-list_categories') || $(p).hasClass('dd-list_tools')) {
+                        case 'tool':
+                            if (parent_type === "tool" || $(p).hasClass("dd-list_categories")) {
                                 return false;
                             }
                             break;
