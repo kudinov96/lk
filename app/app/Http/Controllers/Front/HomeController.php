@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\GraphCategory;
 use App\Models\Tool;
 use Illuminate\Http\Response;
 
@@ -10,6 +11,10 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
+        /*GraphCategory::query()->create([
+            "title" => "SubTestCategory",
+            "parent_id" => 5,
+        ]);*/
         /*Tool::query()->where("title", "Tool1")->update([
             "data" => [
                 "MIN" => [
@@ -34,6 +39,7 @@ class HomeController extends Controller
                 ],
             ],
         ]);*/
+
         return response()->view("app.home", [
             "sessionId" => session()->getId(),
             "botName"   => config("bot.bot_name"),

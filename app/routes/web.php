@@ -20,12 +20,12 @@ use TCG\Voyager\Facades\Voyager;
 Route::get("/", [HomeController::class, "index"]);
 
 Route::group(["prefix" => "bot"], function(){
-    Route::get("setWebhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
-    Route::get("getWebhookInfo", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
+    Route::get("set-webhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
+    Route::get("get-webhook-info", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
     Route::post("webhook", [BotController::class, "webhook"])->name("bot.webhook");
 });
 
-Route::post("ajax/checkAuth", function() {
+Route::post("ajax/check-auth", function() {
     return auth()->user() ? 1 : 0;
 })->name("checkAuth");
 
@@ -37,4 +37,5 @@ Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
 
     Route::get("graphs", [GraphsController::class, "index"])->name("voyager.graph.index");
+    Route::post("ajax/graphs-update", [GraphsController::class, "updateGraphs"])->name("voyager.graph.update");
 });
