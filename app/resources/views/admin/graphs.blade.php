@@ -21,7 +21,6 @@
                         <div class="dd" id="dd-nestable">
                             <ol class="dd-list dd-list_categories" id="dd-output"></ol>
                         </div>
-                        <textarea id="nestable2-output"></textarea>
                     </div>
                 </div>
             </div>
@@ -42,22 +41,13 @@
             let updateOutput = function(e) {
                 let list   = e.length ? e : $(e.target);
                 let output = list.data('output');
-                let json   = window.JSON.stringify(list.nestable('serialize'));
-
-                if (window.JSON) {
-                    output.val(json);//, null, 2));
-                }
-
+                let newGraphsJson   = window.JSON.stringify(list.nestable('serialize'));
 
                 $.ajax({
                     url: "{{ route("voyager.graph.update") }}",
                     type: "POST",
                     data: {
-                        json,
-                    },
-                    beforeSend: function (){
-                    },
-                    complete: function (){
+                        newGraphsJson,
                     },
                     success: function(response) {
                         console.log(response);
@@ -66,7 +56,11 @@
             };
 
             function buildItem(item) {
-                let html = '<li class="dd-item" data-id="' + item.id + '" data-type="' + item.type + '" data-title="' + item.title + '">';
+                let dataData = '';
+                if (typeof item.data !== "undefined") {
+                    dataData = ' data-data=\'' + JSON.stringify(item.data) + '\'';
+                }
+                let html = '<li class="dd-item" data-id="' + item.id + '" data-type="' + item.type + '" data-title="' + item.title + '"' + dataData + '>';
 
                 html += '<div class="pull-right item_actions">' +
                             '<div class="btn btn-sm btn-danger pull-right delete" data-id="' + item.id + '">' +
@@ -123,29 +117,43 @@
                 output += buildItem(item);
             });
 
-            $('#dd-output').html(output);
-            $('#dd-nestable').nestable({
-                expandBtnHTML: '',
-                collapseBtnHTML: '',
+            $("#dd-output").html(output);
+            $("#dd-nestable").nestable({
+                expandBtnHTML: "",
+                collapseBtnHTML: "",
                 maxDepth: 3,
                 beforeDragStop: function (l, e, p) {
-                    let type        = $(e).data('type');
-                    let parent_type = $(p).closest(".dd-item").data('type');
+                    let type        = $(e).data("type");
+                    let parent_type = $(p).closest(".dd-item").data("type");
 
                     switch (type) {
-                        case 'category':
-                            if (parent_type === "category" || parent_type === "subcategory" || parent_type === "tool") {
+                        case "category":
+                            if (parent_type === "subcategory" || parent_type === "tool") {
                                 return false;
                             }
+
+                            if (parent_type === "category") {
+                                if ($(e).find('[data-type="subcategory"]').length === 0) {
+                                    $(e).data("type", "subcategory");
+                                } else {
+                                    return false;
+                                }
+                            }
+
                             break;
 
-                        case 'subcategory':
-                            if (parent_type === "subcategory" || parent_type === "tool"|| $(p).hasClass("dd-list_categories")) {
+                        case "subcategory":
+                            if (parent_type === "subcategory" || parent_type === "tool") {
                                 return false;
                             }
+
+                            if ($(p).hasClass("dd-list_categories")) {
+                                $(e).data("type", "category");
+                            }
+
                             break;
 
-                        case 'tool':
+                        case "tool":
                             if (parent_type === "tool" || $(p).hasClass("dd-list_categories")) {
                                 return false;
                             }
@@ -154,9 +162,7 @@
                             console.error("Invalid type");
                     }
                 }
-            }).on('change', updateOutput);
-
-            updateOutput($('#dd-nestable').data('output', $('#nestable2-output')));
+            }).on("change", updateOutput);
 
         });
     </script>

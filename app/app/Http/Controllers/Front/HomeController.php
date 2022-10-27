@@ -15,7 +15,9 @@ class HomeController extends Controller
             "title" => "SubTestCategory",
             "parent_id" => 5,
         ]);*/
-        /*Tool::query()->where("title", "Tool1")->update([
+        /*Tool::query()->create([
+            "title" => "Tool1",
+            "graph_category_id" => 16,
             "data" => [
                 "MIN" => [
                     "url" => "https://www.google.com/1",
