@@ -16,8 +16,8 @@ class HomeController extends Controller
             "parent_id" => 5,
         ]);*/
         /*Tool::query()->create([
-            "title" => "Tool1",
-            "graph_category_id" => 16,
+            "title" => "Tool2",
+            "graph_category_id" => 17,
             "data" => [
                 "MIN" => [
                     "url" => "https://www.google.com/1",

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\GraphCategory\CreateGraphCategory;
+use App\Actions\GraphCategory\DeleteGraphCategory;
 use App\Actions\GraphCategory\UpdateGraphCategory;
+use App\Actions\Tool\DeleteTool;
 use App\Actions\Tool\UpdateTool;
+use App\Enums\GraphTypeEnum;
 use App\Enums\IntervalCodeEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GraphCategoryRequest;
 use App\Models\GraphCategory;
 use App\Models\Tool;
 use Illuminate\Http\Request;
@@ -20,7 +25,55 @@ class GraphsController extends Controller
         return response()->view("admin.graphs", compact("graphsJson", "intervalCodes"));
     }
 
-    public function updateGraphs(Request $request, UpdateGraphCategory $updateGraphCategory, UpdateTool $updateTool)
+    public function createGraphs(GraphCategoryRequest $request, CreateGraphCategory $createGraphCategory): array
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $type = $request->input("type") ?? "";
+
+        if ($type === GraphTypeEnum::CATEGORY->value || $type === GraphTypeEnum::SUBCATEGORY->value) {
+            $item = $createGraphCategory->handle($request->all());
+        }
+
+        return [
+            "success" => true,
+            "item"    => [
+                "id"       => $item->id,
+                "type"     => $type,
+                "title"    => $item->title,
+            ],
+        ];
+    }
+
+    public function deleteGraphs(Request $request, DeleteTool $deleteTool, DeleteGraphCategory $deleteGraphCategory): array
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $id   = (int) $request->input("id") ?? "";
+        $type = $request->input("type") ?? "";
+
+        if ($type === GraphTypeEnum::CATEGORY->value || $type === GraphTypeEnum::SUBCATEGORY->value) {
+            $item = GraphCategory::findOrFail($id);
+
+            $deleteGraphCategory->handle($item);
+        }
+
+        if ($type === GraphTypeEnum::TOOL->value) {
+            $item = Tool::findOrFail($id);
+
+            $deleteTool->handle($item);
+        }
+
+        return [
+            "success" => true,
+        ];
+    }
+
+    public function orderGraphs(Request $request, UpdateGraphCategory $updateGraphCategory, UpdateTool $updateTool): array
     {
         if (!$request->ajax()) {
             abort(404);
@@ -38,48 +91,41 @@ class GraphsController extends Controller
 
         $order = 0;
         foreach ($newGraphsJson as $category) {
-            $categoryModel = GraphCategory::find($category->id);
+            $categoryModel = GraphCategory::find($category->modelId);
 
             $updateGraphCategory->handle($categoryModel, [
-                "title"     => $category->title,
                 "parent_id" => null,
                 "order"     => $order,
             ]);
-
 
             if (isset($category->children)) {
                 foreach ($category->children as $category_children) {
                     $order++;
 
-                    if ($category_children->type === "subcategory") {
-                        $subcategoryModel = GraphCategory::find($category_children->id);
+                    if ($category_children->type === GraphTypeEnum::SUBCATEGORY->value) {
+                        $subcategoryModel = GraphCategory::find($category_children->modelId);
 
                         $updateGraphCategory->handle($subcategoryModel, [
-                            "title"     => $category_children->title,
-                            "parent_id" => $category->id,
+                            "parent_id" => $category->modelId,
                             "order"     => $order,
                         ]);
 
                         if (isset($category_children->children)) {
                             foreach ($category_children->children as $tool) {
                                 $order++;
-                                $toolModel = Tool::find($tool->id);
+                                $toolModel = Tool::find($tool->modelId);
 
                                 $updateTool->handle($toolModel, [
-                                    "title"             => $tool->title,
-                                    "data"              => $tool->data,
-                                    "graph_category_id" => $category_children->id,
+                                    "graph_category_id" => $category_children->modelId,
                                     "order"             => $order,
                                 ]);
                             }
                         }
-                    } elseif ($category_children->type === "tool") {
-                        $toolModel = Tool::find($category_children->id);
+                    } elseif ($category_children->type === GraphTypeEnum::TOOL->value) {
+                        $toolModel = Tool::find($category_children->modelId);
 
                         $updateTool->handle($toolModel, [
-                            "title"             => $category_children->title,
-                            "data"              => $category_children->data,
-                            "graph_category_id" => $category->id,
+                            "graph_category_id" => $category->modelId,
                             "order"             => $order,
                         ]);
                     }
@@ -113,7 +159,7 @@ class GraphsController extends Controller
                         $tools[] = [
                             "id"    => $tool->id,
                             "title" => $tool->title,
-                            "type"  => "tool",
+                            "type"  => GraphTypeEnum::TOOL->value,
                             "data"  => $tool->data,
                         ];
                     }
@@ -121,14 +167,14 @@ class GraphsController extends Controller
                     $children[] = [
                         "id"       => $children_item->id,
                         "title"    => $children_item->title,
-                        "type"     => "subcategory",
+                        "type"     => GraphTypeEnum::SUBCATEGORY->value,
                         "children" => $tools,
                     ];
                 } elseif ($children_item->getMorphClass() === Tool::class) {
                     $children[] = [
                         "id"    => $children_item->id,
                         "title" => $children_item->title,
-                        "type"  => "tool",
+                        "type"  => GraphTypeEnum::TOOL->value,
                         "data"  => $children_item->data,
                     ];
                 }
@@ -137,7 +183,7 @@ class GraphsController extends Controller
             $resultArray[] = [
                 "id"       => $category->id,
                 "title"    => $category->title,
-                "type"     => "category",
+                "type"     => GraphTypeEnum::CATEGORY->value,
                 "children" => $children,
             ];
         }

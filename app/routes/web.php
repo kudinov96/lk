@@ -37,5 +37,8 @@ Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
 
     Route::get("graphs", [GraphsController::class, "index"])->name("voyager.graph.index");
-    Route::post("ajax/graphs-update", [GraphsController::class, "updateGraphs"])->name("voyager.graph.update");
+
+    Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
+    Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");
+    Route::post("ajax/graphs", [GraphsController::class, "createGraphs"])->name("voyager.graph.create");
 });
