@@ -17,3 +17,17 @@
     width: 100px;
     margin-right: 10px;
 }
+
+.dd-graphs__item-color{
+    margin-left: 15px;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    span{
+        margin-left: 5px;
+        display: inline-block;
+        border: 1px solid #333;
+        width: 26px;
+        height: 20px;
+    }
+}

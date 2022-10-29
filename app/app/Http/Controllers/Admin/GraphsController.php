@@ -40,9 +40,12 @@ class GraphsController extends Controller
         return [
             "success" => true,
             "item"    => [
-                "id"       => $item->id,
-                "type"     => $type,
-                "title"    => $item->title,
+                "id"           => $item->id,
+                "parent_id"    => $item->parent_id,
+                "type"         => $type,
+                "title"        => $item->title,
+                "color_title"  => $item->color_title,
+                "color_border" => $item->color_border,
             ],
         ];
     }
@@ -165,10 +168,12 @@ class GraphsController extends Controller
                     }
 
                     $children[] = [
-                        "id"       => $children_item->id,
-                        "title"    => $children_item->title,
-                        "type"     => GraphTypeEnum::SUBCATEGORY->value,
-                        "children" => $tools,
+                        "id"           => $children_item->id,
+                        "title"        => $children_item->title,
+                        "color_title"  => $children_item->color_title,
+                        "color_border" => $children_item->color_border,
+                        "type"         => GraphTypeEnum::SUBCATEGORY->value,
+                        "children"     => $tools,
                     ];
                 } elseif ($children_item->getMorphClass() === Tool::class) {
                     $children[] = [
@@ -181,10 +186,12 @@ class GraphsController extends Controller
             }
 
             $resultArray[] = [
-                "id"       => $category->id,
-                "title"    => $category->title,
-                "type"     => GraphTypeEnum::CATEGORY->value,
-                "children" => $children,
+                "id"           => $category->id,
+                "title"        => $category->title,
+                "color_title"  => $category->color_title,
+                "color_border" => $category->color_border,
+                "type"         => GraphTypeEnum::CATEGORY->value,
+                "children"     => $children,
             ];
         }
 

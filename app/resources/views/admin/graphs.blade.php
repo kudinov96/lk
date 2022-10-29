@@ -60,6 +60,8 @@
                 </div>
                 <form id="add_item_form" method="POST">
                     <input type="hidden" name="type">
+                    <input type="hidden" name="parent_id">
+
                     <div class="modal-body">
                         <div>
                             <label for="title">Заголовок</label>
@@ -111,20 +113,27 @@
             };
 
             function buildItem(item) {
-                let dataData = '';
-                if (typeof item.data !== "undefined") {
-                    dataData = ' data-data=\'' + JSON.stringify(item.data) + '\'';
-                }
-                let html = '<li class="dd-item" data-id="' + item.type + '-' + item.id + '" data-model-id="' + item.id + '" data-type="' + item.type + '" data-title="' + item.title + '"' + dataData + '>';
+                let html = '<li class="dd-item" data-id="' + item.type + '-' + item.id + '" data-model-id="' + item.id + '" data-type="' + item.type + '">';
 
-                html += '<div class="pull-right item_actions">' +
-                            '<div class="btn btn-sm btn-danger pull-right delete">' +
+                html += '<div class="pull-right item_actions">';
+                     if (item.type === "category") {
+                         html += '<div class="btn btn-success add_item" data-type="subcategory" data-parent-id="' + item.id + '"><i class="voyager-plus"></i></div>';
+                     }
+
+                     if (item.type === "subcategory") {
+                         html += '<div class="btn btn-success add_item" data-type="tool"><i class="voyager-plus"></i></div>';
+                     }
+                     html +='<div class="btn btn-sm btn-danger pull-right delete">' +
                                 '<i class="voyager-trash"></i> Удалить' +
                             '</div>' +
                         '</div>' +
                         '<div class="dd-handle">' +
-                            '<span>' + item.title + '</span> <small class="url">' + item.type + '</small>' +
-                        '</div>';
+                            '<span>' + item.title + '</span>';
+                            if (item.type !== "tool") {
+                                html += '<span class="dd-graphs__item-color">Заголовок <span style="background-color: ' + item.color_title + '"></span></span>' +
+                                '<span class="dd-graphs__item-color">Рамка <span style="background-color: ' + item.color_border + '"></span></span>';
+                            }
+                html += '</div>';
 
                 if (item.type === "tool") {
                     html += '<div class="dd-graphs">';
@@ -155,13 +164,13 @@
                     html += '</div>';
                 }
 
+                html += "<ol class='dd-list'>";
                 if (item.children) {
-                    html += "<ol class='dd-list'>";
                     $.each(item.children, function (index, sub) {
                         html += buildItem(sub);
                     });
-                    html += "</ol>";
                 }
+                html += "</ol>";
 
                 html += '</li>';
 
@@ -188,13 +197,13 @@
                             }
 
                             if (parent_type === "category") {
-                                if ($(e).find('[data-type="subcategory"]').length === 0) {
+                                if ($(e).find('.dd-item[data-type="subcategory"]').length === 0) {
                                     $(e).data("type", "subcategory");
+                                    $(e).attr("data-type", "subcategory");
                                 } else {
                                     return false;
                                 }
                             }
-
                             break;
 
                         case "subcategory":
@@ -204,8 +213,8 @@
 
                             if ($(p).hasClass("dd-list_categories")) {
                                 $(e).data("type", "category");
+                                $(e).attr("data-type", "category");
                             }
-
                             break;
 
                         case "tool":
@@ -220,7 +229,7 @@
             }).on("change", updateOutput);
 
             // Delete item
-            $(".item_actions").on("click", ".delete", function (e) {
+            $(document).on("click", ".delete", function (e) {
                 e.preventDefault();
 
                 let $modal = $("#delete_modal");
@@ -259,16 +268,17 @@
             });
 
             // Add item
-            $(".add_item").click(function() {
-                let $modal = $("#add_item_modal");
-                let type  = $(this).data("type");
+            $(document).on("click", ".add_item", function() {
+                let $modal    = $("#add_item_modal");
+                let type      = $(this).data("type");
+                let parent_id = $(this).data("parent-id");
 
                 $("#add_item_form").trigger("reset");
                 $("#add_item_form").find('input[name="type"]').val(type);
+                $("#add_item_form").find('input[name="parent_id"]').val(parent_id);
 
-                if (type === "category") {
-                    $modal.find("#m_hd_add_category").removeClass("hidden");
-                }
+                $modal.find(".modal-title").addClass("hidden");
+                $modal.find("#m_hd_add_" + type).removeClass("hidden");
 
                 $modal.modal('show');
             });
@@ -279,6 +289,7 @@
                 let $this        = $(this);
                 let $modal       = $("#add_item_modal");
                 let type         = $this.find('input[name="type"]').val();
+                let parent_id    = $this.find('input[name="parent_id"]').val();
                 let title        = $this.find('input[name="title"]').val();
                 let color_title  = $this.find('input[name="color_title"]').val();
                 let color_border = $this.find('input[name="color_border"]').val();
@@ -288,15 +299,21 @@
                     type: "POST",
                     data: {
                         type,
+                        parent_id,
                         title,
                         color_title,
-                        color_border
+                        color_border,
                     },
                     success: function(response) {
                         console.log(response);
 
                         if (response.success === true) {
-                            $("#dd-output").append(buildItem(response.item))
+                            if (response.item.type === "category") {
+                                $("#dd-output").append(buildItem(response.item))
+                            }
+                            if (response.item.type === "subcategory") {
+                                $("#dd-output").find('.dd-item[data-id="category-' + response.item.parent_id + '"] > ol.dd-list').append(buildItem(response.item))
+                            }
                         }
                         $modal.modal("hide");
                     },
