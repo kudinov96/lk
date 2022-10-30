@@ -54,9 +54,9 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span
                             aria-hidden="true">&times;</span></button>
-                    <h4 id="m_hd_add_category" class="modal-title hidden"><i class="voyager-plus"></i> Добавить категорию</h4>
-                    <h4 id="m_hd_add_subcategory" class="modal-title hidden"><i class="voyager-plus"></i> Добавить подкатегорию</h4>
-                    <h4 id="m_hd_add_tool" class="modal-title hidden"><i class="voyager-plus"></i> Добавить инструмент</h4>
+                    <h4 class="modal-title modal-title__category hidden"><i class="voyager-plus"></i> Добавить категорию</h4>
+                    <h4 class="modal-title modal-title__subcategory hidden"><i class="voyager-plus"></i> Добавить подкатегорию</h4>
+                    <h4 class="modal-title modal-title__tool hidden"><i class="voyager-plus"></i> Добавить инструмент</h4>
                 </div>
                 <form id="add_item_form" method="POST">
                     <input type="hidden" name="type">
@@ -67,13 +67,31 @@
                             <label for="title">Заголовок</label>
                             <input type="text" class="form-control" id="title" name="title" required><br>
                         </div>
-                        <div>
+                        <div class="modal-field modal-field__category modal-field__subcategory hidden">
                             <label for="color_title">Цвет заголовка</label>
                             <input type="color" class="form-control" id="color_title" name="color_title" required><br>
                         </div>
-                        <div>
+                        <div class="modal-field modal-field__category modal-field__subcategory hidden">
                             <label for="color_border">Цвет рамки</label>
                             <input type="color" class="form-control" id="color_border" name="color_border" required><br>
+                        </div>
+                        <div class="modal-field modal-field__tool hidden">
+                            <input type="hidden" name="graph_category_id">
+                            <div class="dd-graphs">
+                                @php($i = 0)
+                                @foreach($intervalCodes as $index_code)
+                                    <div class="dd-graphs__item">
+                                        <input type="text" name="data[{{ $i }}][interval]" class="form-control dd-graphs__item-interval" required>
+                                        <select name="data[{{ $i }}][interval_code]" class="form-control dd-graphs__item-interval-code" required>
+                                            @foreach($intervalCodes as $v)
+                                                <option value="{{ $v }}" @if($index_code === $v) selected @endif>{{ $v }}</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="text" name="data[{{ $i }}][url]" class="form-control dd-graphs__item-url" placeholder="Url" required>
+                                    </div>
+                                    @php($i++)
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -121,8 +139,9 @@
                      }
 
                      if (item.type === "subcategory") {
-                         html += '<div class="btn btn-success add_item" data-type="tool"><i class="voyager-plus"></i></div>';
+                         html += '<div class="btn btn-success add_item" data-type="tool" data-graph-category-id="' + item.id + '"><i class="voyager-plus"></i></div>';
                      }
+
                      html +='<div class="btn btn-sm btn-danger pull-right delete">' +
                                 '<i class="voyager-trash"></i> Удалить' +
                             '</div>' +
@@ -137,17 +156,10 @@
 
                 if (item.type === "tool") {
                     html += '<div class="dd-graphs">';
-                    $.each(intervalCodes, function (index_code) {
-                        let interval = "";
-                        let url = "";
-
-                        if (typeof item.data[index_code] !== "undefined") {
-                            interval = item.data[index_code].interval;
-                            url      = item.data[index_code].url;
-                        }
-
+                    $.each(item.data, function (index_code, index_data) {
+                        console.log(index_data);
                         html += '<div class="dd-graphs__item">' +
-                                    '<input type="text" name="interval" value="' + interval + '" class="form-control dd-graphs__item-interval">' +
+                                    '<input type="text" name="interval" value="' + index_data.interval + '" class="form-control dd-graphs__item-interval">' +
                                     '<select name="interval_code" class="form-control dd-graphs__item-interval-code">';
                                         $.each(intervalCodes, function (k, v) {
                                             let selected = false;
@@ -158,7 +170,7 @@
                                             html += '<option value="' + v + '"' + selected + '>' + v + '</option>';
                                         });
                                 html += '</select>' +
-                                    '<input type="text" name="url" value="' + url + '" class="form-control dd-graphs__item-url" placeholder="Url">' +
+                                    '<input type="text" name="url" value="' + index_data.url + '" class="form-control dd-graphs__item-url" placeholder="Url">' +
                                 '</div>';
                     });
                     html += '</div>';
@@ -269,16 +281,21 @@
 
             // Add item
             $(document).on("click", ".add_item", function() {
-                let $modal    = $("#add_item_modal");
-                let type      = $(this).data("type");
-                let parent_id = $(this).data("parent-id");
+                let $modal            = $("#add_item_modal");
+                let $form             = $("#add_item_form");
+                let type              = $(this).data("type");
+                let parent_id         = $(this).data("parent-id");
+                let graph_category_id = $(this).data("graph-category-id");
 
-                $("#add_item_form").trigger("reset");
-                $("#add_item_form").find('input[name="type"]').val(type);
-                $("#add_item_form").find('input[name="parent_id"]').val(parent_id);
+                $form.trigger("reset");
+                $form.find('input[name="type"]').val(type);
+                $form.find('input[name="parent_id"]').val(parent_id);
+                $form.find('input[name="graph_category_id"]').val(graph_category_id);
 
                 $modal.find(".modal-title").addClass("hidden");
-                $modal.find("#m_hd_add_" + type).removeClass("hidden");
+                $modal.find(".modal-field").addClass("hidden");
+                $modal.find(".modal-title__" + type).removeClass("hidden");
+                $modal.find(".modal-field__" + type).removeClass("hidden");
 
                 $modal.modal('show');
             });
@@ -286,24 +303,17 @@
             $("#add_item_form").on("submit", function (e) {
                 e.preventDefault();
 
-                let $this        = $(this);
-                let $modal       = $("#add_item_modal");
-                let type         = $this.find('input[name="type"]').val();
-                let parent_id    = $this.find('input[name="parent_id"]').val();
-                let title        = $this.find('input[name="title"]').val();
-                let color_title  = $this.find('input[name="color_title"]').val();
-                let color_border = $this.find('input[name="color_border"]').val();
+                let $this    = $(this);
+                let $modal   = $("#add_item_modal");
+                let formData = new FormData($this[0]);
 
                 $.ajax({
                     url: "{{ route("voyager.graph.create") }}",
                     type: "POST",
-                    data: {
-                        type,
-                        parent_id,
-                        title,
-                        color_title,
-                        color_border,
-                    },
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    data: formData,
                     success: function(response) {
                         console.log(response);
 
@@ -311,9 +321,16 @@
                             if (response.item.type === "category") {
                                 $("#dd-output").append(buildItem(response.item))
                             }
+
                             if (response.item.type === "subcategory") {
                                 $("#dd-output").find('.dd-item[data-id="category-' + response.item.parent_id + '"] > ol.dd-list').append(buildItem(response.item))
                             }
+
+                            if (response.item.type === "tool") {
+                                $("#dd-output").find('.dd-item[data-id="category-' + response.item.graph_category_id + '"] > ol.dd-list, .dd-item[data-id="subcategory-' + response.item.graph_category_id + '"] > ol.dd-list').append(buildItem(response.item))
+                            }
+
+                            $this.trigger("reset");
                         }
                         $modal.modal("hide");
                     },

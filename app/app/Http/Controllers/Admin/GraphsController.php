@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Actions\GraphCategory\CreateGraphCategory;
 use App\Actions\GraphCategory\DeleteGraphCategory;
 use App\Actions\GraphCategory\UpdateGraphCategory;
+use App\Actions\Tool\CreateTool;
 use App\Actions\Tool\DeleteTool;
 use App\Actions\Tool\UpdateTool;
 use App\Enums\GraphTypeEnum;
 use App\Enums\IntervalCodeEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GraphCategoryRequest;
 use App\Models\GraphCategory;
 use App\Models\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class GraphsController extends Controller
 {
@@ -25,7 +26,7 @@ class GraphsController extends Controller
         return response()->view("admin.graphs", compact("graphsJson", "intervalCodes"));
     }
 
-    public function createGraphs(GraphCategoryRequest $request, CreateGraphCategory $createGraphCategory): array
+    public function createGraphs(Request $request, CreateGraphCategory $createGraphCategory, CreateTool $createTool): array
     {
         if (!$request->ajax()) {
             abort(404);
@@ -33,19 +34,71 @@ class GraphsController extends Controller
 
         $type = $request->input("type") ?? "";
 
+        if ($type === GraphTypeEnum::TOOL->value) {
+            $request->validate([
+                "title"                => "required",
+                "graph_category_id"    => "nullable|integer|exists:App\Models\GraphCategory,id",
+                "data"                 => "required|array",
+                "data.*.interval"      => "required|integer",
+                "data.*.interval_code" => ["required", new Enum(IntervalCodeEnum::class)],
+                "data.*.url"           => "required|url",
+            ]);
+
+            /*$jsonData = [];
+            foreach ($request->input("data") as $data_item) {
+               $jsonData[$data_item["interval_code"]] = [
+                   "interval" => $data_item["interval"],
+                   "url"      => $data_item["url"],
+               ];
+            }*/
+
+            /*$request->merge([
+                "data" => $jsonData,
+            ]);*/
+
+            $item = $createTool->handle($request->only([
+                "title",
+                "graph_category_id",
+                "data",
+            ]));
+
+            return [
+                "success" => true,
+                "item"    => [
+                    "id"                => $item->id,
+                    "title"             => $item->title,
+                    "graph_category_id" => $item->graph_category_id,
+                    "data"              => $item->data,
+                    "type"              => $type,
+                ],
+            ];
+        }
+
         if ($type === GraphTypeEnum::CATEGORY->value || $type === GraphTypeEnum::SUBCATEGORY->value) {
-            $item = $createGraphCategory->handle($request->all());
+            $request->validate([
+                "title"        => "required",
+                "parent_id"    => "nullable|integer|exists:App\Models\GraphCategory,id",
+                "color_title"  => "required",
+                "color_border" => "required",
+            ]);
+
+            $item = $createGraphCategory->handle($request->only([
+                "title",
+                "parent_id",
+                "color_title",
+                "color_border",
+            ]));
         }
 
         return [
             "success" => true,
             "item"    => [
                 "id"           => $item->id,
-                "parent_id"    => $item->parent_id,
-                "type"         => $type,
                 "title"        => $item->title,
+                "parent_id"    => $item->parent_id,
                 "color_title"  => $item->color_title,
                 "color_border" => $item->color_border,
+                "type"         => $type,
             ],
         ];
     }
