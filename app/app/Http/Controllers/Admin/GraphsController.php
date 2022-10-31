@@ -32,29 +32,18 @@ class GraphsController extends Controller
             abort(404);
         }
 
-        $type = $request->input("type") ?? "";
+        $type           = $request->input("type") ?? "";
+        $parent_full_id = $request->input("parent_full_id") ?? "";
 
         if ($type === GraphTypeEnum::TOOL->value) {
             $request->validate([
                 "title"                => "required",
                 "graph_category_id"    => "nullable|integer|exists:App\Models\GraphCategory,id",
-                "data"                 => "required|array",
-                "data.*.interval"      => "required|integer",
-                "data.*.interval_code" => ["required", new Enum(IntervalCodeEnum::class)],
-                "data.*.url"           => "required|url",
+                "data"                 => "nullable|array",
+                "data.*.interval"      => "nullable|integer",
+                "data.*.interval_code" => ["nullable", new Enum(IntervalCodeEnum::class)],
+                "data.*.url"           => "nullable|url",
             ]);
-
-            /*$jsonData = [];
-            foreach ($request->input("data") as $data_item) {
-               $jsonData[$data_item["interval_code"]] = [
-                   "interval" => $data_item["interval"],
-                   "url"      => $data_item["url"],
-               ];
-            }*/
-
-            /*$request->merge([
-                "data" => $jsonData,
-            ]);*/
 
             $item = $createTool->handle($request->only([
                 "title",
@@ -65,11 +54,11 @@ class GraphsController extends Controller
             return [
                 "success" => true,
                 "item"    => [
-                    "id"                => $item->id,
-                    "title"             => $item->title,
-                    "graph_category_id" => $item->graph_category_id,
-                    "data"              => $item->data,
-                    "type"              => $type,
+                    "id"             => $item->id,
+                    "title"          => $item->title,
+                    "parent_full_id" => $parent_full_id,
+                    "data"           => $item->data,
+                    "type"           => $type,
                 ],
             ];
         }
@@ -93,12 +82,81 @@ class GraphsController extends Controller
         return [
             "success" => true,
             "item"    => [
-                "id"           => $item->id,
-                "title"        => $item->title,
-                "parent_id"    => $item->parent_id,
-                "color_title"  => $item->color_title,
-                "color_border" => $item->color_border,
-                "type"         => $type,
+                "id"             => $item->id,
+                "title"          => $item->title,
+                "parent_full_id" => $parent_full_id,
+                "color_title"    => $item->color_title,
+                "color_border"   => $item->color_border,
+                "type"           => $type,
+            ],
+        ];
+    }
+
+    public function updateGraphs(Request $request, UpdateGraphCategory $updateGraphCategory, UpdateTool $updateTool): array
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $id   = (int) $request->input("id") ?? "";
+        $type = $request->input("type") ?? "";
+
+        if ($type === GraphTypeEnum::TOOL->value) {
+            $request->validate([
+                "title"                => "required",
+                "data"                 => "nullable|array",
+                "data.*.interval"      => "nullable|integer",
+                "data.*.interval_code" => ["nullable", new Enum(IntervalCodeEnum::class)],
+                "data.*.url"           => "nullable|url",
+            ]);
+
+            $item = Tool::findOrFail($id);
+
+            $item = $updateTool->handle($item, $request->only([
+                "title",
+                "data",
+            ]));
+
+            return [
+                "success" => true,
+                "item"    => [
+                    "id"             => $item->id,
+                    "title"          => $item->title,
+                    "data"           => $item->data,
+                    "type"           => $type,
+                ],
+            ];
+        }
+
+        if ($type === GraphTypeEnum::CATEGORY->value || $type === GraphTypeEnum::SUBCATEGORY->value) {
+            $request->validate([
+                "title"        => "required",
+                "color_title"  => "required",
+                "color_border" => "required",
+            ]);
+
+            $item = GraphCategory::findOrFail($id);
+
+            $request->merge([
+                "parent_id" => $item->parent_id,
+            ]);
+
+            $item = $updateGraphCategory->handle($item, $request->only([
+                "title",
+                "color_title",
+                "color_border",
+                "parent_id",
+            ]));
+        }
+
+        return [
+            "success" => true,
+            "item"    => [
+                "id"             => $item->id,
+                "title"          => $item->title,
+                "color_title"    => $item->color_title,
+                "color_border"   => $item->color_border,
+                "type"           => $type,
             ],
         ];
     }

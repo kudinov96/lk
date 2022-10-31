@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        dd(Tool::query()->find(10)->data);
+        /*dd(Tool::query()->find(10)->data);*/
         /*GraphCategory::query()->create([
             "title" => "SubTestCategory",
             "parent_id" => 5,

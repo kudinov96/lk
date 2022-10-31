@@ -41,4 +41,5 @@ Route::group(["prefix" => "admin"], function () {
     Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
     Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");
     Route::post("ajax/graphs", [GraphsController::class, "createGraphs"])->name("voyager.graph.create");
+    Route::put("ajax/graphs", [GraphsController::class, "updateGraphs"])->name("voyager.graph.update");
 });
