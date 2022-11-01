@@ -192,6 +192,7 @@
 
                 html += '<div class="pull-right item_actions">';
                      if (item.type === "category") {
+                         html += '<div class="btn btn-success add_item" data-type="tool" data-graph-category-id="' + item.id + '" data-parent-full-id="' + item.type + '-' + item.id + '"><i class="voyager-tools"></i></div>';
                          html += '<div class="btn btn-success add_item" data-type="subcategory" data-parent-id="' + item.id + '" data-parent-full-id="' + item.type + '-' + item.id + '"><i class="voyager-plus"></i></div>';
                          html += '<div class="btn btn-sm btn-primary edit" ' +
                              'data-title="' + item.title + '" ' +
@@ -202,7 +203,7 @@
                      }
 
                      if (item.type === "subcategory") {
-                         html += '<div class="btn btn-success add_item" data-type="tool" data-graph-category-id="' + item.id + '" data-parent-full-id="' + item.type + '-' + item.id + '"><i class="voyager-plus"></i></div>';
+                         html += '<div class="btn btn-success add_item" data-type="tool" data-graph-category-id="' + item.id + '" data-parent-full-id="' + item.type + '-' + item.id + '"><i class="voyager-tools"></i></div>';
                          html += '<div class="btn btn-sm btn-primary edit" ' +
                              'data-title="' + item.title + '" ' +
                              'data-color-title="' + item.color_title + '" ' +
@@ -222,8 +223,9 @@
                      html +='<div class="btn btn-sm btn-danger pull-right delete">' +
                                 '<i class="voyager-trash"></i> Удалить' +
                             '</div>' +
-                        '</div>' +
-                        '<div class="dd-handle">' +
+                        '</div>';
+
+                 html +='<div class="dd-handle">' +
                             '<span class="dd-graphs__item-title">' + item.title + '</span>';
                             if (item.type !== "tool") {
                                 html += '<span class="dd-graphs__item-color">Заголовок <span class="dd-graphs__item-color-title" style="background-color: ' + item.color_title + '"></span></span>' +
@@ -232,26 +234,9 @@
                 html += '</div>';
 
                 if (item.type === "tool") {
-                    html += '<div class="dd-graphs">';
+                    html += '<div class="dd-graphs-titles">';
                     $.each(item.data, function (index, index_data) {
-                        let interval      = index_data.interval ?? "";
-                        let interval_code = index_data.interval_code ?? "";
-                        let url           = index_data.url ?? "";
-
-                        html += '<div class="dd-graphs__item">' +
-                                    '<input readonly type="text" name="data[' + index + '][interval]" value="' + interval + '" class="form-control dd-graphs__item-interval">' +
-                                    '<select disabled name="data[' + index + '][interval_code]" class="form-control dd-graphs__item-interval-code">';
-                                        $.each(intervalCodes, function (k, v) {
-                                            let selected = false;
-
-                                            if (interval_code === v) {
-                                                selected = " selected";
-                                            }
-                                            html += '<option value="' + v + '"' + selected + '>' + v + '</option>';
-                                        });
-                                html += '</select>' +
-                                    '<input readonly type="text" name="data[' + index + '][url]" value="' + url + '" class="form-control dd-graphs__item-url" placeholder="Url">' +
-                                '</div>';
+                        html += buildToolGraph(index, index_data);
                     });
                     html += '</div>';
                 }
@@ -431,6 +416,17 @@
                 }
             }
 
+            function buildToolGraph(index, index_data) {
+                let url           = index_data.url ?? "";
+                let interval      = index_data.interval ?? "";
+                let interval_code = index_data.interval_code ?? "";
+                let tag           = interval && url ? "a" : "span";
+                let tagClass      = url ? 'dd-graphs-titles__item item-' + index : 'dd-graphs-titles__item item-' + index + ' none';
+                let text          = interval ? interval + interval_code : "--";
+
+                return '<' + tag + ' href="' + url + '" class="' + tagClass + '">' + text + '</' + tag + '>';
+            }
+
             $("#add_item_form").on("submit", function (e) {
                 e.preventDefault();
 
@@ -501,9 +497,9 @@
                             if (response.item.type === "tool") {
                                 $edit_btn.data("data", response.item.data)
                                 $.each(response.item.data, function(index, index_data) {
-                                    $dd_item.find('input[name="data[' + index + '][interval]"]').val(index_data.interval);
-                                    $dd_item.find('select[name="data[' + index + '][interval_code]"]').val(index_data.interval_code);
-                                    $dd_item.find('input[name="data[' + index + '][url]"]').val(index_data.url);
+                                    let $elem = $dd_item.find('.dd-graphs-titles__item.item-' + index);
+
+                                    $elem.replaceWith(buildToolGraph(index, index_data));
                                 });
                             }
 
