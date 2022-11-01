@@ -13,14 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("courses", function (Blueprint $table) {
-            $table->id();
-            $table->string("title");
-            $table->integer("price");
-            $table->integer("price_discount")->nullable();
-            $table->string("link");
-
-            $table->timestamps();
+        Schema::table("tool", function (Blueprint $table) {
+            $table->unsignedBigInteger("order")->nullable();
         });
     }
 
@@ -31,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("courses");
+        Schema::table("tool", function (Blueprint $table) {
+            $table->dropColumn("order");
+        });
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\GraphsController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -19,12 +20,12 @@ use TCG\Voyager\Facades\Voyager;
 Route::get("/", [HomeController::class, "index"]);
 
 Route::group(["prefix" => "bot"], function(){
-    Route::get("setWebhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
-    Route::get("getWebhookInfo", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
+    Route::get("set-webhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
+    Route::get("get-webhook-info", [BotController::class, "getWebhookInfo"])->name("bot.getWebhookInfo");
     Route::post("webhook", [BotController::class, "webhook"])->name("bot.webhook");
 });
 
-Route::post("ajax/checkAuth", function() {
+Route::post("ajax/check-auth", function() {
     return auth()->user() ? 1 : 0;
 })->name("checkAuth");
 
@@ -34,4 +35,11 @@ Route::get("profile", function() {
 
 Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
+
+    Route::get("graphs", [GraphsController::class, "index"])->name("voyager.graph.index");
+
+    Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
+    Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");
+    Route::post("ajax/graphs", [GraphsController::class, "createGraphs"])->name("voyager.graph.create");
+    Route::put("ajax/graphs", [GraphsController::class, "updateGraphs"])->name("voyager.graph.update");
 });

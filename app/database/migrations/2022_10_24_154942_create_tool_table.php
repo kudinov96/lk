@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("services", function (Blueprint $table) {
+        Schema::create("tool", function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->integer("price");
-            $table->integer("price_discount")->nullable();
-            $table->text("content");
-
+            $table->jsonb("data");
+            $table->unsignedBigInteger("graph_category_id");
             $table->timestamps();
+
+            $table->foreign("graph_category_id")->references("id")->on("graph_category")->onDelete("cascade");
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("services");
+        Schema::dropIfExists("tool");
     }
 };

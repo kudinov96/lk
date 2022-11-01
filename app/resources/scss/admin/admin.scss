@@ -1,0 +1,60 @@
+.dd-graphs__item{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    &:last-child{
+        margin-bottom: 0;
+    }
+}
+
+.dd-graphs__item-interval{
+    width: 44px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.dd-graphs__item-interval-code{
+    width: 100px;
+    margin-right: 10px;
+}
+
+.dd-graphs__item-color{
+    margin-left: 15px;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    span{
+        margin-left: 5px;
+        display: inline-block;
+        border: 1px solid #333;
+        width: 26px;
+        height: 20px;
+    }
+}
+
+.dd-graphs-titles{
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    right: 200px;
+}
+
+.dd-graphs-titles__item{
+    text-decoration: underline;
+    font-size: 14px;
+    padding: 5px;
+    width: 68px;
+    text-align: center;
+    &.none{
+        text-decoration: none;
+    }
+}
+
+.add_item{
+    margin-left: 5px;
+    .voyager-tools{
+        position: relative;
+        top: 2px;
+    }
+}

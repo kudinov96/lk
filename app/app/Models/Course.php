@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Course extends Model
 {
-    protected $table = "courses";
+    protected $table = "course";
 
     protected $guarded = [
         "id",
