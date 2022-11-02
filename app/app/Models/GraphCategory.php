@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Order;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class GraphCategory extends Model
 {
     use HasFactory;
+    use Order;
 
     protected $table = "graph_category";
 
@@ -52,14 +54,5 @@ class GraphCategory extends Model
     public function scopeWithoutParent(Builder $query): Builder
     {
         return $query->where("parent_id", null);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope("order", function (Builder $builder) {
-            $builder->orderBy("order", "ASC");
-        });
     }
 }
