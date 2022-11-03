@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $updated_at
  *
  * @property string $full_count_name
+ * @property string $full_count_name_human
  */
 class Period extends Model
 {

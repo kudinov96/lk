@@ -41,6 +41,7 @@ Route::group(["prefix" => "admin"], function () {
     Route::get("subscription/create", [SubscriptionController::class, "create"])->name("voyager.subscription.create");
     Route::get("subscription/{id}/edit", [SubscriptionController::class, "edit"])->name("voyager.subscription.edit");
     Route::post("subscription", [SubscriptionController::class, "store"])->name("voyager.subscription.store");
+    Route::put("subscription/{id}", [SubscriptionController::class, "update"])->name("voyager.subscription.update");
 
     Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
     Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");
