@@ -11,6 +11,7 @@ class UpdateSubscription
     {
         $item->title   = $data["title"] ?? $item->title;
         $item->content = $data["content"] ?? null;
+        $item->color   = $data["color"] ?? null;
         $item->is_test = isset($data["is_test"]) ? true : false;
 
         $item->save();
@@ -37,8 +38,17 @@ class UpdateSubscription
             }
         }
 
-        $item->graph_categories()->sync($data["graph_categories"]);
-        $item->telegram_channels()->sync($data["telegram_channels"]);
+        if (isset($data["graph_categories"])) {
+            $item->graph_categories()->sync($data["graph_categories"]);
+        } else {
+            $item->graph_categories()->detach();
+        }
+
+        if (isset($data["telegram_channels"])) {
+            $item->telegram_channels()->sync($data["telegram_channels"]);
+        } else {
+            $item->telegram_channels()->detach();
+        }
 
         return $item;
     }

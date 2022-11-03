@@ -20,9 +20,16 @@
                         @csrf
 
                         <div class="panel-body">
-                            <div class="form-group col-md-12 ">
-                                <label class="control-label" for="name">Название</label>
-                                <input  type="text" class="form-control" name="title" placeholder="Название" value="{{ $item->title }}" required>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="name">Название</label>
+                                    <input  type="text" class="form-control" name="title" placeholder="Название" value="{{ $item->title }}" required>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="color">Цвет подписки</label>
+                                    <input type="color" class="form-control" name="color" value="{{ $item->color }}"><br>
+                                </div>
                             </div>
 
                             <div class="form-group col-md-12 ">

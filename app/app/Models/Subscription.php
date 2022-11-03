@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $title
  * @property string $content
  * @property bool   $is_test
+ * @property string $color
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at

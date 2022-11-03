@@ -1,3 +1,11 @@
+.btn-tg{
+    background-color: #1f304e;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    opacity: .9;
+}
+
 .dd-graphs__item{
     display: flex;
     align-items: center;
@@ -73,5 +81,18 @@
         > .col-xs-6{
             margin-bottom: 10px;
         }
+    }
+}
+
+.user-subscriptions__item{
+    opacity: .9;
+    padding: 5px 10px;
+    font-weight: 500;
+    border-radius: 3px;
+    color: #fff;
+    margin-right: 5px;
+    &:hover{
+        opacity: 1;
+        color: #fff;
     }
 }
