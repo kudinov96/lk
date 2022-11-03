@@ -58,3 +58,20 @@
         top: 2px;
     }
 }
+
+.periods{
+    > .row {
+        > .col-xs-6{
+            margin-bottom: 0;
+        }
+    }
+
+}
+
+.periods__item{
+    > .row {
+        > .col-xs-6{
+            margin-bottom: 10px;
+        }
+    }
+}

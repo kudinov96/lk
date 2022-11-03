@@ -162,7 +162,6 @@
 @stop
 
 @section('javascript')
-
     <script>
         $(document).ready(function () {
 
@@ -435,7 +434,7 @@
                 let formData = new FormData($this[0]);
 
                 $.ajax({
-                    url: "{{ route("voyager.graph.create") }}",
+                    url: "{{ route("voyager.graph.store") }}",
                     type: "POST",
                     processData: false,
                     contentType: false,

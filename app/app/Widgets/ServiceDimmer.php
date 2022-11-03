@@ -28,15 +28,15 @@ class ServiceDimmer extends BaseDimmer
             'buttons' => [
                 [
                     'text' => "Подписки",
-                    'link' => null,
+                    'link' => route("voyager.subscription.index"),
                 ],
                 [
                     'text' => "Курсы",
-                    'link' => route("voyager.courses.index"),
+                    'link' => route("voyager.course.index"),
                 ],
                 [
                     'text' => "Услуги",
-                    'link' => route("voyager.services.index"),
+                    'link' => route("voyager.service.index"),
                 ],
                 [
                     'text' => "Графики",

@@ -26,7 +26,7 @@ class GraphsController extends Controller
         return response()->view("admin.graphs", compact("graphsJson", "intervalCodes"));
     }
 
-    public function createGraphs(Request $request, CreateGraphCategory $createGraphCategory, CreateTool $createTool): array
+    public function storeGraphs(Request $request, CreateGraphCategory $createGraphCategory, CreateTool $createTool): array
     {
         if (!$request->ajax()) {
             abort(404);
