@@ -1,4 +1,4 @@
-@extends('voyager::master')
+@extends('admin.layout')
 
 @section('page_title', 'Графики')
 

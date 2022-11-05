@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\GraphsController;
 use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,13 @@ Route::group(["prefix" => "admin"], function () {
     Route::get("subscription/{id}/edit", [SubscriptionController::class, "edit"])->name("voyager.subscription.edit");
     Route::post("subscription", [SubscriptionController::class, "store"])->name("voyager.subscription.store");
     Route::put("subscription/{id}", [SubscriptionController::class, "update"])->name("voyager.subscription.update");
+
+    Route::get("users/create", [UserController::class, "create"])->name("voyager.users.create");
+    Route::post("users", [UserController::class, "store"])->name("voyager.users.store");
+    Route::put("users/{id}", [UserController::class, "update"])->name("voyager.users.update");
+    Route::post("users/actions", [UserController::class, "actions"])->name("voyager.users.actions");
+
+    Route::post("ajax/subscription/periods", [SubscriptionController::class, "periods"])->name("voyager.subscription.periods");
 
     Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
     Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");

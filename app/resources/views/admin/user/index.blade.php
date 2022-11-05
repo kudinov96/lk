@@ -1,10 +1,6 @@
-@extends('voyager::master')
+@extends('admin.layout')
 
 @section('page_title', 'Пользователи')
-
-@section('css')
-    @vite('resources/scss/admin/admin.scss')
-@stop
 
 @section('page_header')
     <div class="container-fluid">
@@ -24,23 +20,39 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                        <form method="get" class="form-search">
-                            <div id="search-input">
-                                <div class="input-group col-md-12">
-                                    <input type="text" class="form-control" placeholder="{{ __('voyager::generic.search') }}" name="s">
-                                    <span class="input-group-btn">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="sorting">
+                                    <select id="sorting" class="select2">
+                                        <option selected value="">Сортировать по</option>
+                                        @foreach($subscriptions as $subscription)
+                                            <option value="subscription-{{ $subscription->id }}" @if(request()->sort_by === "subscription-$subscription->id") selected @endif>Подписки: {{ $subscription->title }}</option>
+                                        @endforeach
+                                        @foreach($graphCategories as $category)
+                                            <option value="graphCategory-{{ $category->id }}" @if(request()->sort_by === "graphCategory-$category->id") selected @endif>Графики: {{ $category->title }}</option>
+                                            @foreach($category->subcategories as $subcategory)
+                                                <option value="graphCategory-{{ $subcategory->id }}" @if(request()->sort_by === "graphCategory-$subcategory->id") selected @endif>— {{ $subcategory->title }}</option>
+                                            @endforeach
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <form method="get" class="form-search">
+                                    <div id="search-input">
+                                        <div class="input-group col-md-12">
+                                            <input type="text" class="form-control" placeholder="{{ __('voyager::generic.search') }}" name="s" value="{{ request()->s }}">
+                                            <span class="input-group-btn">
                                         <button class="btn btn-info btn-lg" type="submit">
                                             <i class="voyager-search"></i>
                                         </button>
                                     </span>
-                                </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            @if (Request::has('sort_order') && Request::has('order_by'))
-                                <input type="hidden" name="sort_order" value="{{ Request::get('sort_order') }}">
-                                <input type="hidden" name="order_by" value="{{ Request::get('order_by') }}">
-                            @endif
-                        </form>
-                        <div class="table-responsive">
+                        </div>
+                        <div class="table-responsive table-users">
                             <table id="dataTable" class="table table-hover">
                                 <thead>
                                 <tr>
@@ -59,7 +71,7 @@
                                     @foreach($users as $user)
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="row_id" id="checkbox_{{ $user->id }}" value="">
+                                                <input type="checkbox" name="ids" class="checked-ids" value="{{ $user->id }}">
                                             </td>
                                             <td>
                                                 ID: {{ $user->id }}
@@ -92,10 +104,35 @@
                             </table>
                         </div>
                         <div class="pull-left">
-
+                            <div class="actions">
+                                <form id="actions_form">
+                                    <select name="actions" class="select2" required>
+                                        @foreach($subscriptions as $subscription)
+                                            <option value="add-subscription-{{ $subscription->id }}">Добавить подписку: {{ $subscription->title }}</option>
+                                        @endforeach
+                                        <option selected value="">C отмеченными</option>
+                                        <option value="clear-subscriptions">Очистить подписки</option>
+                                        <option value="clear-courses">Очистить курсы</option>
+                                        <option value="ban">Заблокировать</option>
+                                        <option value="delete">Удалить</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">Применить</button>
+                                </form>
+                            </div>
                         </div>
                         <div class="pull-right">
+                            {{ $users->appends([
+                                's' => request()->s,
+                            ])->links() }}
 
+                            <div сlass="show-res">
+                                {{ trans_choice(
+                                    'voyager::generic.showing_entries', $users->total(), [
+                                        'from' => $users->firstItem(),
+                                        'to' => $users->lastItem(),
+                                        'all' => $users->total()
+                                ]) }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,6 +159,24 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    {{-- Confirm modal --}}
+    <div class="modal modal-danger fade" tabindex="-1" id="confirm_modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Вы действительно хотите применить это действие?</h4>
+                </div>
+                <div class="modal-footer">
+                    <form id="confirm_form" method="POST">
+                        <input type="submit" class="btn btn-danger pull-right delete-confirm" value="Да">
+                    </form>
+                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 @stop
 
 @section('javascript')
@@ -132,6 +187,74 @@
                 $('#delete_form')[0].action = '{{ route('voyager.users.destroy', '__id') }}'.replace('__id', $(this).data('id'));
                 $('#delete_modal').modal('show');
             });
+
+            $("#sorting").on("change", function(){
+                let value  = $(this).val();
+
+                updateQueryStringParam("sort_by", value);
+                location.reload();
+            });
+
+            $("#actions_form").on("submit", function(e){
+                e.preventDefault();
+
+                $("#confirm_modal").modal("show");
+            });
+
+            $("#confirm_form").on("submit", function(e){
+                e.preventDefault();
+
+                const formData = new FormData();
+
+                let $modal     = $("#confirm_modal");
+                let action     = $(document).find('select[name="actions"]').val();
+                let checkboxes = document.querySelectorAll('input.checked-ids:checked');
+
+                formData.append("action", action);
+
+                for(let i = 0; i < checkboxes.length; i++){
+                    formData.append("ids[]", checkboxes[i].value);
+                }
+
+                $.ajax({
+                    url: "{{ route("voyager.users.actions") }}",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    data: formData,
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.success === true) {
+                            $(this).trigger("reset");
+                            location.reload();
+                        }
+
+                        $modal.modal("hide");
+                    },
+                });
+            });
+
+            var updateQueryStringParam = function (key, value) {
+                var baseUrl = [location.protocol, '//', location.host, location.pathname].join(''),
+                    urlQueryString = document.location.search,
+                    newParam = key + '=' + value,
+                    params = '?' + newParam;
+
+                // If the "search" string exists, then build params from it
+                if (urlQueryString) {
+                    keyRegex = new RegExp('([\?&])' + key + '[^&]*');
+
+                    // If param exists already, update it
+                    if (urlQueryString.match(keyRegex) !== null) {
+                        params = urlQueryString.replace(keyRegex, "$1" + newParam);
+                    } else { // Otherwise, add it to end of query string
+                        params = urlQueryString + '&' + newParam;
+                    }
+                }
+                window.history.replaceState({}, "", baseUrl + params);
+            };
         });
     </script>
 @stop

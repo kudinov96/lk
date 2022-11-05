@@ -96,3 +96,50 @@
         color: #fff;
     }
 }
+
+.table-users{
+    th, td{
+        vertical-align: middle !important;
+    }
+}
+
+.sorting{
+    .select2-selection{
+        height: 38px;
+        padding: 5px;
+        border: 1px solid #eaeaf1 !important;
+        border-radius: 6px !important;
+    }
+    .select2-selection__arrow{
+        top: 6px !important;
+        right: 3px !important;
+    }
+}
+
+.actions{
+    margin-bottom: 10px;
+    select{
+        margin-bottom: 5px;
+    }
+}
+
+.form-group__is-ban-field{
+    label{
+        margin-right: 5px;
+    }
+}
+
+.subscriptions-add__item{
+    display: flex;
+    align-items: center;
+    label{
+        flex: none;
+        margin-bottom: 0;
+    }
+    .select2{
+        margin-left: 15px;
+    }
+    .btn{
+        margin-left: 15px;
+    }
+}

@@ -1,10 +1,6 @@
-@extends('voyager::master')
+@extends('admin.layout')
 
 @section('page_title', 'Редактировать подписку')
-
-@section('css')
-    @vite('resources/scss/admin/admin.scss')
-@stop
 
 @section('page_header')
     <h1 class="page-title">Редактировать подписку</h1>

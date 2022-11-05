@@ -16,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $password
  * @property string $telegram_name
  * @property int    $telegram_id
+ * @property bool   $is_ban
  */
 class User extends \TCG\Voyager\Models\User
 {
@@ -32,6 +33,7 @@ class User extends \TCG\Voyager\Models\User
         'password',
         'telegram_id',
         'telegram_name',
+        'is_ban',
     ];
 
     /**
@@ -60,7 +62,7 @@ class User extends \TCG\Voyager\Models\User
 
     public function subscriptions(): BelongsToMany
     {
-        return $this->belongsToMany(Subscription::class, "subscription_users");
+        return $this->belongsToMany(Subscription::class, "subscription_users")->withPivot("date_start", "date_end");
     }
 
     public function courses(): BelongsToMany

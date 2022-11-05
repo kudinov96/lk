@@ -38,4 +38,9 @@ class Subscription extends Model
     {
         return $this->belongsToMany(TelegramChannel::class, "subscription_telegram_channel");
     }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, "subscription_users")->withPivot("date_start", "date_end");
+    }
 }

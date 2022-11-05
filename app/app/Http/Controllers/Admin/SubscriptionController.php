@@ -92,4 +92,22 @@ class SubscriptionController extends Controller
                 'alert-type' => 'success',
             ]);
     }
+
+    public function periods(Request $request): array
+    {
+        $subscription = Subscription::findOrFail($request->input("id"));
+
+        $data = [];
+        foreach ($subscription->periods as $period) {
+            $data[] = [
+                "id"   => $period->full_count_name,
+                "text" => $period->full_count_name_human,
+            ];
+        }
+
+        return [
+            "success" => true,
+            "data" => $data,
+        ];
+    }
 }

@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create("subscription_users", function (Blueprint $table) {
             $table->unsignedBigInteger("subscription_id");
             $table->unsignedBigInteger("user_id");
+            $table->dateTime("date_start");
+            $table->dateTime("date_end");
 
             $table->foreign("subscription_id")->references("id")->on("subscription")->onDelete("cascade");
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
