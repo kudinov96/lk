@@ -129,17 +129,41 @@
     }
 }
 
-.subscriptions-add__item{
+.user-page{
+    h4{
+        margin-bottom: 20px;
+    }
+    h5{
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+}
+
+.user-page-add__item{
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
+    &:last-child{
+        margin-bottom: 0;
+    }
     label{
         flex: none;
         margin-bottom: 0;
     }
     .select2{
         margin-left: 15px;
+        width: 100% !important;
     }
     .btn{
         margin-left: 15px;
+    }
+}
+
+.user-page__discount-field{
+    display: flex;
+    align-items: center;
+    input{
+        width: 60px;
+        margin: 0 5px 0 15px;
     }
 }

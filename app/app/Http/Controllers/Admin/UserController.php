@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
+use App\Models\Course;
 use App\Models\GraphCategory;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -62,16 +64,20 @@ class UserController extends VoyagerUserController
     {
         $roles         = Role::all();
         $subscriptions = Subscription::all();
+        $services      = Service::all();
+        $courses       = Course::all();
 
         return response()->view("admin.user.create", compact(
             "roles",
             "subscriptions",
+            "services",
+            "courses",
         ));
     }
 
     public function store(Request $request)
     {
-
+        dd($request->all());
     }
 
     public function update(Request $request, $id)
