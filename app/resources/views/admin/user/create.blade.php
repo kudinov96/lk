@@ -46,7 +46,21 @@
 
                                 <div class="col-xs-6">
                                     <div class="form-group">
-                                        <select class="select2" name="role">
+                                        <input type="text" class="form-control" name="email" placeholder="E-mail"
+                                               value="{{ old("email") }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="password" placeholder=Пароль
+                                               value="{{ old("password") }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <select class="select2" name="role_id">
                                             @foreach($roles as $role)
                                                 <option value="{{ $role->id }}">{{ $role->display_name }}</option>
                                             @endforeach
@@ -68,7 +82,7 @@
                                         <div class="user-page-add__item" data-number="0">
                                             <label class="control-label">Добавить подписку</label><br>
                                             <select name="subscriptions[0][id]" class="select2 subscriptions-add__select-sub" id="subscriptions-add__select-sub-0">
-                                                <option value="">Выбрать подписку</option>
+                                                <option value="" selected>Выбрать подписку</option>
                                                 @foreach($subscriptions as $subscription)
                                                     <option value="{{ $subscription->id }}">{{ $subscription->title }}</option>
                                                 @endforeach
@@ -90,13 +104,13 @@
                                         <div class="user-page-add__item" data-number="0">
                                             <label class="control-label">Добавить услугу</label><br>
                                             <select name="services[0][id]" class="select2" id="services-add__select-0">
-                                                <option value="">Выбрать услугу</option>
+                                                <option value="" selected>Выбрать услугу</option>
                                                 @foreach($services as $service)
                                                     <option value="{{ $service->id }}">{{ $service->title }}</option>
                                                 @endforeach
                                             </select>
                                             <div class="btn btn-success add_service"><i class="voyager-plus"></i> Добавить услугу</div>
-                                            <input type="hidden" name="subscriptions[0][added]" value="0" />
+                                            <input type="hidden" name="services[0][added]" value="0" />
                                         </div>
                                     </div>
 
@@ -105,7 +119,7 @@
                                         <div class="user-page-add__item" data-number="0">
                                             <label class="control-label">Добавить курс</label><br>
                                             <select name="courses[0][id]" class="select2" id="courses-add__select-0">
-                                                <option value="">Выбрать курс</option>
+                                                <option value="" selected>Выбрать курс</option>
                                                 @foreach($courses as $course)
                                                     <option value="{{ $course->id }}">{{ $course->title }}</option>
                                                 @endforeach
@@ -122,18 +136,18 @@
                                         <div class="user-page-add__item" data-number="0">
                                             <label class="control-label">Добавить скидку</label><br>
                                             <select name="discounts[0][id]" class="select2" id="discounts-add__select-0">
-                                                <option value="">Выбрать услугу</option>
+                                                <option value="" selected>Выбрать услугу</option>
                                                 <option disabled>Подписки</option>
                                                 @foreach($subscriptions as $subscription)
-                                                    <option value="{{ $subscription->id }}">— {{ $subscription->title }}</option>
+                                                    <option value="Subscription-{{ $subscription->id }}">— {{ $subscription->title }}</option>
                                                 @endforeach
                                                 <option disabled>Курсы</option>
                                                 @foreach($courses as $course)
-                                                    <option value="{{ $course->id }}">— {{ $course->title }}</option>
+                                                    <option value="Course-{{ $course->id }}">— {{ $course->title }}</option>
                                                 @endforeach
                                                 <option disabled>Услуги</option>
                                                 @foreach($services as $service)
-                                                    <option value="{{ $service->id }}">— {{ $service->title }}</option>
+                                                    <option value="Service-{{ $service->id }}">— {{ $service->title }}</option>
                                                 @endforeach
                                             </select>
                                             <div class="user-page__discount-field">
@@ -153,6 +167,7 @@
                 <div class="col-md-4">
                     <div class="panel panel panel-bordered panel-warning">
                         <div class="panel-body">
+                            <h4>Аватар</h4>
                             <div class="form-group">
                                 <input type="file" data-name="avatar" name="avatar">
                             </div>
@@ -165,10 +180,6 @@
                 {{ __('voyager::generic.add') }}
             </button>
         </form>
-        <div style="display:none">
-            <input type="hidden" id="upload_url" value="{{ route('voyager.upload') }}">
-            <input type="hidden" id="upload_type_slug" value="user">
-        </div>
     </div>
 @stop
 
@@ -312,15 +323,15 @@
                                     '<option value="">Выбрать услугу</option>' +
                                     '<option disabled>Подписки</option>';
                                     $.each(subscriptionsJson, function(index, index_data){
-                                        html += '<option value="' + index_data.id + '">' + index_data.title + '</option>';
+                                        html += '<option value="Subscription-' + index_data.id + '">' + index_data.title + '</option>';
                                     });
                             html += '<option disabled>Курсы</option>';
                                     $.each(coursesJson, function(index, index_data){
-                                        html += '<option value="' + index_data.id + '">' + index_data.title + '</option>';
+                                        html += '<option value="Course-' + index_data.id + '">' + index_data.title + '</option>';
                                     });
                             html += '<option disabled>Услуги</option>';
                                     $.each(servicesJson, function(index, index_data){
-                                        html += '<option value="' + index_data.id + '">' + index_data.title + '</option>';
+                                        html += '<option value="Service-' + index_data.id + '">' + index_data.title + '</option>';
                                     });
                         html += '</select>' +
                                 '<div class="user-page__discount-field">' +

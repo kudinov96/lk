@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
+use App\Actions\User\UpdateCoursesUser;
+use App\Actions\User\UpdateDiscountsUser;
+use App\Actions\User\UpdateServicesUser;
+use App\Actions\User\UpdateSubscriptionsUser;
 use App\Models\Course;
 use App\Models\GraphCategory;
 use App\Models\Service;
@@ -11,6 +15,8 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use TCG\Voyager\Events\BreadDataAdded;
+use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\VoyagerUserController;
 use TCG\Voyager\Models\Role;
 
@@ -77,12 +83,49 @@ class UserController extends VoyagerUserController
 
     public function store(Request $request)
     {
-        dd($request->all());
+        $updateSubscriptionsUser = new UpdateSubscriptionsUser();
+        $updateServicesUser      = new UpdateServicesUser();
+        $updateCoursesUser       = new UpdateCoursesUser();
+        $updateDiscountsUser     = new UpdateDiscountsUser();
+
+        $slug = "users";
+
+        $subscriptions = $request->input("subscriptions") ?? [];
+        $services      = $request->input("services") ?? [];
+        $courses       = $request->input("courses") ?? [];
+        $discounts     = $request->input("discounts") ?? [];
+
+        $request->merge([
+            "is_ban" => $request->input("is_ban") ? true : false,
+        ]);
+
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        // Check permission
+        $this->authorize('add', app($dataType->model_name));
+
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
+        $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new User());
+
+        event(new BreadDataAdded($dataType, $data));
+
+        $updateSubscriptionsUser->handle($data, $subscriptions);
+        $updateServicesUser->handle($data, $services);
+        $updateCoursesUser->handle($data, $courses);
+        $updateDiscountsUser->handle($data, $discounts);
+
+        $redirect = redirect()->route("voyager.{$slug}.index");
+
+        return $redirect->with([
+            'message'    => __('voyager::generic.successfully_added_new')." {$dataType->getTranslatedAttribute('display_name_singular')}",
+            'alert-type' => 'success',
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-
+        dd($request->all());
     }
 
     public function actions(Request $request, UpdateBanUser $updateBan, DeleteUser $delete): array
