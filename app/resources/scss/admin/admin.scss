@@ -167,3 +167,34 @@
         margin: 0 5px 0 15px;
     }
 }
+
+.user-page-update__item{
+    display: flex;
+    align-items: center;
+    .btn{
+        margin-left: 5px;
+        &.extend_subscription{
+            margin-left: auto;
+            margin-right: 15px;
+        }
+    }
+}
+
+.user-page-update__item-title{
+    font-size: 16px;
+    span{
+        font-weight: 700;
+    }
+}
+
+.user-page__subscriptions-auto{
+    span{
+        margin-right: 5px;
+    }
+}
+
+.user-page-update__services, .user-page-update__courses{
+    .btn-danger{
+        margin-left: auto;
+    }
+}

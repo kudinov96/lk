@@ -4,11 +4,10 @@ namespace App\Actions\User;
 
 use App\Models\User;
 
-class UpdateCoursesUser
+class CreateCoursesUser
 {
     public function handle(User $item, array $courses): User
     {
-        $item->courses()->detach();
         foreach ($courses as $course) {
             $added = $course["added"] === "1" ? true : false;
 

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\User\CreateCoursesUser;
+use App\Actions\User\CreateDiscountsUser;
+use App\Actions\User\CreateServicesUser;
+use App\Actions\User\CreateSubscriptionsUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
-use App\Actions\User\UpdateCoursesUser;
-use App\Actions\User\UpdateDiscountsUser;
-use App\Actions\User\UpdateServicesUser;
-use App\Actions\User\UpdateSubscriptionsUser;
 use App\Models\Course;
 use App\Models\GraphCategory;
 use App\Models\Service;
@@ -81,12 +81,30 @@ class UserController extends VoyagerUserController
         ));
     }
 
+    public function edit(Request $request, $id)
+    {
+        $item = User::findOrFail($id);
+
+        $roles         = Role::all();
+        $subscriptions = Subscription::all();
+        $services      = Service::all();
+        $courses       = Course::all();
+
+        return response()->view("admin.user.edit", compact(
+            "item",
+            "roles",
+            "subscriptions",
+            "services",
+            "courses",
+        ));
+    }
+
     public function store(Request $request)
     {
-        $updateSubscriptionsUser = new UpdateSubscriptionsUser();
-        $updateServicesUser      = new UpdateServicesUser();
-        $updateCoursesUser       = new UpdateCoursesUser();
-        $updateDiscountsUser     = new UpdateDiscountsUser();
+        $createSubscriptionsUser = new CreateSubscriptionsUser();
+        $createServicesUser      = new CreateServicesUser();
+        $createCoursesUser       = new CreateCoursesUser();
+        $createDiscountsUser     = new CreateDiscountsUser();
 
         $slug = "users";
 
@@ -110,10 +128,10 @@ class UserController extends VoyagerUserController
 
         event(new BreadDataAdded($dataType, $data));
 
-        $updateSubscriptionsUser->handle($data, $subscriptions);
-        $updateServicesUser->handle($data, $services);
-        $updateCoursesUser->handle($data, $courses);
-        $updateDiscountsUser->handle($data, $discounts);
+        $createSubscriptionsUser->handle($data, $subscriptions);
+        $createServicesUser->handle($data, $services);
+        $createCoursesUser->handle($data, $courses);
+        $createDiscountsUser->handle($data, $discounts);
 
         $redirect = redirect()->route("voyager.{$slug}.index");
 

@@ -4,11 +4,10 @@ namespace App\Actions\User;
 
 use App\Models\User;
 
-class UpdateSubscriptionsUser
+class CreateSubscriptionsUser
 {
     public function handle(User $item, array $subscriptions): User
     {
-        $item->subscriptions()->detach();
         foreach ($subscriptions as $subscription) {
             $added = $subscription["added"] === "1" ? true : false;
 

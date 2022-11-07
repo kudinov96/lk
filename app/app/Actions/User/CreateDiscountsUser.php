@@ -5,19 +5,17 @@ namespace App\Actions\User;
 use App\Models\Discount;
 use App\Models\User;
 
-class UpdateDiscountsUser
+class CreateDiscountsUser
 {
     public function handle(User $item, array $discounts): User
     {
-        $item->discounts()->delete();
-
         $appends_discounts = [];
         foreach ($discounts as $discount) {
-            $added           = $discount["added"] === "1" ? true : false;
+            $added = $discount["added"] === "1" ? true : false;
 
             if ($added) {
                 list($type, $id) = explode("-", $discount["id"]);
-                $type            = "App\Model\\" . $type;
+                $type            = "App\Models\\" . $type;
 
                 $appends_discounts[] = new Discount([
                     "count"        => $discount["count"],
