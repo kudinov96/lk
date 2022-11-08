@@ -80,4 +80,9 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->hasMany(Discount::class, "user_id");
     }
+
+    public function payment_history(): HasMany
+    {
+        return $this->hasMany(PaymentHistory::class, "user_id");
+    }
 }

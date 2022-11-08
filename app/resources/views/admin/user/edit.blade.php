@@ -220,6 +220,20 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-xs-12">
+                                    <h4>История оплат</h4>
+
+                                    @if($item->payment_history)
+                                        <div class="payment-history">
+                                            <div class="payment-history__items">
+                                                @foreach($item->payment_history as $payment_history_item)
+                                                    <div class="payment-history__item">{{ $payment_history_item->created_at->format("d.m.Y") }} — {{ $payment_history_item->count }} руб. ({{ $payment_history_item->title }})</div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
