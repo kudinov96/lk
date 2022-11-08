@@ -12,6 +12,7 @@ class CreateSubscription
         $item          = new Subscription();
         $item->title   = $data["title"];
         $item->content = $data["content"] ?? null;
+        $item->color   = $data["color"] ?? null;
         $item->is_test = isset($data["is_test"]) ? true : false;
 
         $item->save();
@@ -36,8 +37,13 @@ class CreateSubscription
             }
         }
 
-        $item->graph_categories()->sync($data["graph_categories"]);
-        $item->telegram_channels()->sync($data["telegram_channels"]);
+        if (isset($data["graph_categories"])) {
+            $item->graph_categories()->sync($data["graph_categories"]);
+        }
+
+        if (isset($data["telegram_channels"])) {
+            $item->telegram_channels()->sync($data["telegram_channels"]);
+        }
 
         return $item;
     }

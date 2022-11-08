@@ -4,10 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property string $name
+ * @property string $email
+ * @property string $email_verified_at
+ * @property string $password
+ * @property string $telegram_name
+ * @property int    $telegram_id
+ * @property bool   $is_ban
+ */
 class User extends \TCG\Voyager\Models\User
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -23,6 +34,7 @@ class User extends \TCG\Voyager\Models\User
         'password',
         'telegram_id',
         'telegram_name',
+        'is_ban',
     ];
 
     /**
@@ -47,5 +59,25 @@ class User extends \TCG\Voyager\Models\User
     public function sessions()
     {
         return $this->hasMany(Session::class);
+    }
+
+    public function subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(Subscription::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal");
+    }
+
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, "course_users");
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, "service_users");
+    }
+
+    public function discounts(): HasMany
+    {
+        return $this->hasMany(Discount::class, "user_id");
     }
 }

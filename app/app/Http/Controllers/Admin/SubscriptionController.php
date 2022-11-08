@@ -56,6 +56,7 @@ class SubscriptionController extends Controller
             "is_test",
             "periods",
             "content",
+            "color",
             "graph_categories",
             "telegram_channels",
             "period_count_name",
@@ -78,6 +79,7 @@ class SubscriptionController extends Controller
             "is_test",
             "periods",
             "content",
+            "color",
             "graph_categories",
             "telegram_channels",
             "period_count_name",
@@ -89,5 +91,23 @@ class SubscriptionController extends Controller
                 'message'    => "Подписка успешно отредактирована",
                 'alert-type' => 'success',
             ]);
+    }
+
+    public function periods(Request $request): array
+    {
+        $subscription = Subscription::findOrFail($request->input("id"));
+
+        $data = [];
+        foreach ($subscription->periods as $period) {
+            $data[] = [
+                "id"   => $period->full_count_name,
+                "text" => $period->full_count_name_human,
+            ];
+        }
+
+        return [
+            "success" => true,
+            "data" => $data,
+        ];
     }
 }

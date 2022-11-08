@@ -1,10 +1,6 @@
-@extends('voyager::master')
+@extends('admin.layout')
 
 @section('page_title', 'Редактировать подписку')
-
-@section('css')
-    @vite('resources/scss/admin/admin.scss')
-@stop
 
 @section('page_header')
     <h1 class="page-title">Редактировать подписку</h1>
@@ -20,9 +16,14 @@
                         @csrf
 
                         <div class="panel-body">
-                            <div class="form-group col-md-12 ">
+                            <div class="form-group col-md-6">
                                 <label class="control-label" for="name">Название</label>
                                 <input  type="text" class="form-control" name="title" placeholder="Название" value="{{ $item->title }}" required>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label class="control-label" for="color">Цвет подписки</label>
+                                <input type="color" class="form-control" name="color" value="{{ $item->color }}"><br>
                             </div>
 
                             <div class="form-group col-md-12 ">

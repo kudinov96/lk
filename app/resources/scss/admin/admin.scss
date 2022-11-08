@@ -1,3 +1,11 @@
+.btn-tg{
+    background-color: #1f304e;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    opacity: .9;
+}
+
 .dd-graphs__item{
     display: flex;
     align-items: center;
@@ -73,5 +81,129 @@
         > .col-xs-6{
             margin-bottom: 10px;
         }
+    }
+}
+
+.user-subscriptions__item{
+    opacity: .9;
+    padding: 5px 10px;
+    font-weight: 500;
+    border-radius: 3px;
+    color: #fff;
+    margin-right: 5px;
+    &:hover{
+        opacity: 1;
+        color: #fff;
+    }
+}
+
+.table-users{
+    th, td{
+        vertical-align: middle !important;
+    }
+}
+
+.sorting{
+    .select2-selection{
+        height: 38px;
+        padding: 5px;
+        border: 1px solid #eaeaf1 !important;
+        border-radius: 6px !important;
+    }
+    .select2-selection__arrow{
+        top: 6px !important;
+        right: 3px !important;
+    }
+}
+
+.actions{
+    margin-bottom: 10px;
+    select{
+        margin-bottom: 5px;
+    }
+}
+
+.form-group__is-ban-field{
+    label{
+        margin-right: 5px;
+    }
+}
+
+.user-page{
+    h4{
+        margin-bottom: 20px;
+    }
+    h5{
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+}
+
+.user-page-add__item{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    &:last-child{
+        margin-bottom: 0;
+    }
+    label{
+        flex: none;
+        margin-bottom: 0;
+    }
+    .select2{
+        margin-left: 15px;
+        width: 100% !important;
+    }
+    .btn{
+        margin-left: 15px;
+    }
+}
+
+.user-page__discount-field{
+    display: flex;
+    align-items: center;
+    input{
+        width: 60px;
+        margin: 0 5px 0 15px;
+    }
+}
+
+.user-page-update__item{
+    display: flex;
+    align-items: center;
+    .btn{
+        margin-left: 5px;
+        &.extend_subscription{
+            margin-right: 15px;
+        }
+    }
+}
+
+.user-page-update__item-title{
+    font-size: 16px;
+    margin-right: auto;
+    span{
+        font-weight: 700;
+    }
+}
+
+.user-page__subscriptions-auto{
+    span{
+        margin-right: 5px;
+    }
+}
+
+.user-page-update__services, .user-page-update__courses, .user-page-update__discounts{
+    .btn-danger{
+        margin-left: auto;
+    }
+}
+
+.user-page-update__subscriptions{
+    .select2{
+        display: none;
+        margin-left: auto;
+        margin-right: 15px;
+        width: 140px !important;
     }
 }

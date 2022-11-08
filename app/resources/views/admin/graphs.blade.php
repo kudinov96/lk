@@ -1,4 +1,4 @@
-@extends('voyager::master')
+@extends('admin.layout')
 
 @section('page_title', 'Графики')
 
@@ -423,7 +423,7 @@
                 let tagClass      = url ? 'dd-graphs-titles__item item-' + index : 'dd-graphs-titles__item item-' + index + ' none';
                 let text          = interval ? interval + interval_code : "--";
 
-                return '<' + tag + ' href="' + url + '" class="' + tagClass + '">' + text + '</' + tag + '>';
+                return '<' + tag + ' href="' + url + '" class="' + tagClass + '" target="_blank">' + text + '</' + tag + '>';
             }
 
             $("#add_item_form").on("submit", function (e) {
