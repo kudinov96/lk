@@ -207,3 +207,17 @@
         width: 140px !important;
     }
 }
+
+.payment-history{
+    font-size: 18px;
+    font-weight: 700;
+    padding: 20px;
+    background-color: #F1F1F1;
+}
+
+.payment-history__item{
+    margin-bottom: 15px;
+    &:last-child{
+        margin-bottom: 0;
+    }
+}
