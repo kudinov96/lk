@@ -151,7 +151,7 @@
                                                 @endforeach
                                             </select>
                                             <div class="user-page__discount-field">
-                                                <input type="number" class="form-control" name="discounts[0][count]">
+                                                <input type="number" class="form-control" min="1" max="100" step="1" name="discounts[0][count]">
                                                 <span>%</span>
                                             </div>
                                             <div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>
@@ -333,7 +333,7 @@
                                     });
                         html += '</select>' +
                                 '<div class="user-page__discount-field">' +
-                                    '<input type="number" class="form-control" name="discounts[' + number + '][count]">' +
+                                    '<input type="number" class="form-control" min="1" max="100" step="1" name="discounts[' + number + '][count]">' +
                                     '<span>%</span>' +
                                 '</div>' +
                                 '<div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>' +

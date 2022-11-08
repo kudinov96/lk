@@ -174,7 +174,6 @@
     .btn{
         margin-left: 5px;
         &.extend_subscription{
-            margin-left: auto;
             margin-right: 15px;
         }
     }
@@ -182,6 +181,7 @@
 
 .user-page-update__item-title{
     font-size: 16px;
+    margin-right: auto;
     span{
         font-weight: 700;
     }
@@ -193,8 +193,17 @@
     }
 }
 
-.user-page-update__services, .user-page-update__courses{
+.user-page-update__services, .user-page-update__courses, .user-page-update__discounts{
     .btn-danger{
         margin-left: auto;
+    }
+}
+
+.user-page-update__subscriptions{
+    .select2{
+        display: none;
+        margin-left: auto;
+        margin-right: 15px;
+        width: 140px !important;
     }
 }

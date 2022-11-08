@@ -6,8 +6,13 @@ use App\Actions\User\CreateCoursesUser;
 use App\Actions\User\CreateDiscountsUser;
 use App\Actions\User\CreateServicesUser;
 use App\Actions\User\CreateSubscriptionsUser;
+use App\Actions\User\DeleteCoursesUser;
+use App\Actions\User\DeleteDiscountsUser;
+use App\Actions\User\DeleteServicesUser;
+use App\Actions\User\DeleteSubscriptionsUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
+use App\Actions\User\UpdateSubscriptionsUser;
 use App\Models\Course;
 use App\Models\GraphCategory;
 use App\Models\Service;
@@ -143,7 +148,42 @@ class UserController extends VoyagerUserController
 
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        $item                = User::findOrFail($id);
+        $deleteSubscriptions = $request->input("delete_subscriptions") ?? [];
+        $deleteCourses       = $request->input("delete_courses") ?? [];
+        $deleteServices      = $request->input("delete_services") ?? [];
+        $deleteDiscounts     = $request->input("delete_discounts") ?? [];
+        $subscriptions       = $request->input("subscriptions") ?? [];
+        $updateSubscriptions = $request->input("update_subscriptions") ?? [];
+        $services            = $request->input("services") ?? [];
+        $courses             = $request->input("courses") ?? [];
+        $discounts           = $request->input("discounts") ?? [];
+
+        $deleteSubscriptionsUser = new DeleteSubscriptionsUser();
+        $deleteServicesUser      = new DeleteServicesUser();
+        $deleteCoursesUser       = new DeleteCoursesUser();
+        $deleteDiscountsUser     = new DeleteDiscountsUser();
+        $createSubscriptionsUser = new CreateSubscriptionsUser();
+        $updateSubscriptionsUser = new UpdateSubscriptionsUser();
+        $createServicesUser      = new CreateServicesUser();
+        $createCoursesUser       = new CreateCoursesUser();
+        $createDiscountsUser     = new CreateDiscountsUser();
+
+        $deleteSubscriptionsUser->handle($item, $deleteSubscriptions);
+        $deleteServicesUser->handle($item, $deleteServices);
+        $deleteCoursesUser->handle($item, $deleteCourses);
+        $deleteDiscountsUser->handle($item, $deleteDiscounts);
+        $createSubscriptionsUser->handle($item, $subscriptions);
+        $updateSubscriptionsUser->handle($item, $updateSubscriptions);
+        $createServicesUser->handle($item, $services);
+        $createCoursesUser->handle($item, $courses);
+        $createDiscountsUser->handle($item, $discounts);
+
+        $request->merge([
+            "is_ban" => $request->input("is_ban") ? true : false,
+        ]);
+
+        return parent::update($request, $id);
     }
 
     public function actions(Request $request, UpdateBanUser $updateBan, DeleteUser $delete): array

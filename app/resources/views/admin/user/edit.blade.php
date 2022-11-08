@@ -79,6 +79,12 @@
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][id]" value="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][updated]" value="0">
                                                         <div class="user-page-update__item-title"><a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" target="_blank">{{ $subscription->title }}</a> до <span>{{ \Carbon\Carbon::parse($subscription->pivot->date_end)->format("d.m.Y") }}</span></div>
+                                                        <select name="update_subscriptions[{{ $key }}][period]" class="select2">
+                                                            <option value="">Выберите период</option>
+                                                            @foreach($subscription->periods as $period)
+                                                                <option value="{{ $period->full_count_name }}">{{ $period->full_count_name_human }}</option>
+                                                            @endforeach
+                                                        </select>
                                                         <div class="btn btn-primary extend_subscription">Продлить</div>
                                                         <div class="user-page__subscriptions-auto">
                                                             <span>Автопродление</span>
@@ -176,10 +182,10 @@
 
                                     @if($item->discounts)
                                         <div class="form-group">
-                                            <div class="user-page-update__courses">
+                                            <div class="user-page-update__discounts">
                                                 @foreach($item->discounts as $key => $discount)
                                                     <div class="user-page-update__item" data-number="{{ $key }}" data-discount-id="{{ $discount->id }}">
-                                                        <div class="user-page-update__item-title">{{ $discount->service_name }} — {{ $discount->count }}%</div>
+                                                        <div class="user-page-update__item-title">{{ $discount->service_name }} — <span>{{ $discount->count }}%</span></div>
                                                         <div class="btn btn-danger remove_update_discount"><i class="voyager-trash"></i> Удалить</div>
                                                     </div>
                                                 @endforeach
@@ -206,7 +212,7 @@
                                                 @endforeach
                                             </select>
                                             <div class="user-page__discount-field">
-                                                <input type="number" class="form-control" name="discounts[0][count]">
+                                                <input type="number" class="form-control" min="1" max="100" step="1" name="discounts[0][count]">
                                                 <span>%</span>
                                             </div>
                                             <div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>
@@ -235,7 +241,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary pull-right save">
-                {{ __('voyager::generic.add') }}
+                {{ __('voyager::generic.save') }}
             </button>
         </form>
     </div>
@@ -251,6 +257,13 @@
             $('.toggleswitch').bootstrapToggle({
                 on: "Да",
                 off: "Нет",
+            });
+
+            $(".user-page__subscriptions-auto input").on("change", function() {
+                let $item  = $(this).closest(".user-page-update__item");
+                let number = $item.data("number");
+
+                $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
             });
 
             $(document).on("change", ".subscriptions-add__select-sub", function(){
@@ -374,29 +387,29 @@
 
                 number++;
                 let html = '<div class="user-page-add__item" data-number="' + number + '">' +
-                    '<label class="control-label">Добавить скидку</label><br>' +
-                    '<select name="discounts[' + number + '][id]" class="select2" id="discounts-add__select-' + number + '">' +
-                    '<option value="">Выбрать услугу</option>' +
-                    '<option disabled>Подписки</option>';
-                $.each(subscriptionsJson, function(index, index_data){
-                    html += '<option value="Subscription-' + index_data.id + '">' + index_data.title + '</option>';
-                });
-                html += '<option disabled>Курсы</option>';
-                $.each(coursesJson, function(index, index_data){
-                    html += '<option value="Course-' + index_data.id + '">' + index_data.title + '</option>';
-                });
-                html += '<option disabled>Услуги</option>';
-                $.each(servicesJson, function(index, index_data){
-                    html += '<option value="Service-' + index_data.id + '">' + index_data.title + '</option>';
-                });
-                html += '</select>' +
-                    '<div class="user-page__discount-field">' +
-                    '<input type="number" class="form-control" name="discounts[' + number + '][count]">' +
-                    '<span>%</span>' +
-                    '</div>' +
-                    '<div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>' +
-                    '<input type="hidden" name="discounts[' + number + '][added]" value="0" />' +
-                    '</div>';
+                                '<label class="control-label">Добавить скидку</label><br>' +
+                                '<select name="discounts[' + number + '][id]" class="select2" id="discounts-add__select-' + number + '">' +
+                                    '<option value="">Выбрать услугу</option>' +
+                                    '<option disabled>Подписки</option>';
+                                    $.each(subscriptionsJson, function(index, index_data){
+                                        html += '<option value="Subscription-' + index_data.id + '">' + index_data.title + '</option>';
+                                    });
+                                    html += '<option disabled>Курсы</option>';
+                                    $.each(coursesJson, function(index, index_data){
+                                        html += '<option value="Course-' + index_data.id + '">' + index_data.title + '</option>';
+                                    });
+                                    html += '<option disabled>Услуги</option>';
+                                    $.each(servicesJson, function(index, index_data){
+                                        html += '<option value="Service-' + index_data.id + '">' + index_data.title + '</option>';
+                                    });
+                        html += '</select>' +
+                                '<div class="user-page__discount-field">' +
+                                '<input type="number" class="form-control" min="1" max="100" step="1" name="discounts[' + number + '][count]">' +
+                                '<span>%</span>' +
+                                '</div>' +
+                                '<div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>' +
+                                '<input type="hidden" name="discounts[' + number + '][added]" value="0" />' +
+                            '</div>';
 
                 $(".discounts-add").append(html);
                 $this.remove();
@@ -435,12 +448,21 @@
             });
 
             $(document).on("click", ".remove_update_discount", function() {
-                let $item      = $(this).closest(".user-page-update__item");
-                let number     = $item.data("number");
+                let $item       = $(this).closest(".user-page-update__item");
+                let number      = $item.data("number");
                 let discount_id = $item.data("discount-id");
 
                 $(this).closest(".user-page-update__discounts").append('<input type="hidden" name="delete_discounts[' + number + ']" value="' + discount_id + '" />');
                 $item.remove();
+            });
+
+            $(document).on("click", ".extend_subscription", function() {
+                let $item  = $(this).closest(".user-page-update__item");
+                let number = $item.data("number");
+
+                $(this).remove();
+                $item.find('.select2').show();
+                $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
             });
         });
     </script>

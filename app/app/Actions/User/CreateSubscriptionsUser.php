@@ -21,8 +21,6 @@ class CreateSubscriptionsUser
             }
         }
 
-        $item->save();
-
         return $item;
     }
 }
