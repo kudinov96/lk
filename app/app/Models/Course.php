@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int    $price
  * @property int    $price_discount
  * @property string $link
+ * @property string $preview
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at

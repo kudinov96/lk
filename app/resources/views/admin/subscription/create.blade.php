@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
-                    <form class="form-edit-add" action="{{ route("voyager.subscription.store") }}" method="POST">
+                    <form class="form-edit-add" action="{{ route("voyager.subscription.store") }}" method="POST" enctype="multipart/form-data">
                         @method("POST")
                         @csrf
 
@@ -24,6 +24,11 @@
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="color">Цвет подписки</label>
                                 <input type="color" class="form-control" name="color"><br>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label class="control-label" for="icon">Иконка</label>
+                                <input type="file" name="icon" accept="image/*">
                             </div>
 
                             <div class="form-group col-md-12">

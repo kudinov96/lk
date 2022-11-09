@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
-                    <form class="form-edit-add" action="{{ route("voyager.subscription.update", ["id" => $item->id]) }}" method="POST">
+                    <form class="form-edit-add" action="{{ route("voyager.subscription.update", ["id" => $item->id]) }}" method="POST" enctype="multipart/form-data">
                         @method("PUT")
                         @csrf
 
@@ -24,6 +24,19 @@
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="color">Цвет подписки</label>
                                 <input type="color" class="form-control" name="color" value="{{ $item->color }}"><br>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label class="control-label" for="icon">Иконка</label>
+                                @if($item->icon)
+                                    <div data-field-name="preview">
+                                        <a href="#" class="voyager-x remove-single-image" style="position:absolute;"></a>
+                                        <img src="@if( !filter_var($item->icon, FILTER_VALIDATE_URL)){{ Voyager::image( $item->icon ) }}@else{{ $item->icon }}@endif"
+                                             data-file-name="{{ $item->icon }}"
+                                             style="max-width:200px; height:auto; clear:both; display:block; padding:2px; border:1px solid #ddd; margin-bottom:10px;">
+                                    </div>
+                                @endif
+                                <input type="file" name="icon" accept="image/*">
                             </div>
 
                             <div class="form-group col-md-12 ">
@@ -125,7 +138,7 @@
                                     <label class="control-label">Период подписки</label>
                                     <select class="form-control select2 select2-hidden-accessible" name="period_count_name">
                                         @foreach($periods as $period_item)
-                                            <option value="{{ $period_item->full_count_name }}" @if($item->is_test && $item->periods->first()->full_count_name === $period_item->full_count_name) selected @endif> {{ $period_item->full_count_name_human }}</option>
+                                            <option value="{{ $period_item->full_count_name }}" @if($item->is_test && $item->periods->first() && $item->periods->first()->full_count_name === $period_item->full_count_name) selected @endif> {{ $period_item->full_count_name_human }}</option>
                                         @endforeach
                                     </select>
                                 </div>
