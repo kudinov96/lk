@@ -26,4 +26,13 @@ class ProfileController extends Controller
 
         return redirect()->route("home");
     }
+
+    public function graphs(): Response
+    {
+        $user = auth()->user();
+
+        return response()->view("app.user.graphs", compact(
+            "user",
+        ));
+    }
 }

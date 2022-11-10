@@ -1,13 +1,5 @@
 @extends("app.layout")
 
-@section("css")
-    <link rel="stylesheet" href="{{ asset("plugins/fancybox/fancybox/jquery.fancybox-1.3.4.css") }}" type="text/css" media="screen" />
-@stop
-
-@section("scripts")
-    {{--<script type="text/javascript" src="{{ asset("plugins/fancybox/fancybox/jquery.fancybox-1.3.4.pack.js") }}"></script>--}}
-@stop
-
 @section("content")
     <div class="page-line">
         <div class="block-name1">
@@ -29,19 +21,25 @@
         <div class="block-lk1 style1">
             <div class="block-lk1__title-top">Ваши подписки</div>
             <table class="table-subscribe1">
-                @foreach($user->subscriptions as $subscription)
+                @foreach($user->subscriptions as $key => $subscription)
                     <tr>
                         <td>
                             <div class="table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
                         </td>
                         <td>
-                            <a href="" class="table-subscribe1__more">Подробнее</a></td>
+                            <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
                         <td>
                             <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
                         </td>
                         <td>
                             <a href="" class="table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
                         </td>
+                        <div class="hidden">
+                            <div id="modal-subscription-{{ $key }}">
+                                <h2>{{ $subscription->title }}</h2>
+                                {!! $subscription->content !!}
+                            </div>
+                        </div>
                     </tr>
                 @endforeach
                 {{--<tr>
@@ -75,13 +73,13 @@
         <div class="block-lk1 style2">
             <div class="block-lk1__title-top">Графики с аналитикой</div>
             <table class="table-subscribe1">
-                @foreach($user->subscriptions as $subscription)
+                @foreach($user->subscriptions as $key => $subscription)
                     @foreach($subscription->graph_categories as $category)
                         <tr>
                             <td>
                                 <div class="table-subscribe1__title1"><span>{{ $category->title }}</span> до {{ $subscription->date_end }}</div>
                             </td>
-                            <td><a href="" class="table-subscribe1__more2">Подробнее от подписке</a></td>
+                            <td><a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
                             <td>
                                 <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}</div>
                             </td>
@@ -119,25 +117,32 @@
             <table class="training-seminars1">
                 @foreach($user->courses as $course)
                     <tr>
-                        <td><a href="https://www.youtube.com/watch?v=A3PDXmYoF5U" data-fancybox class="training-seminars1__video" style="background-image: url(img/vd1.jpg);"></a></td>
+                        <td><a href="{{ $course->link }}" target="_blank" class="training-seminars1__video" style="background-image: url({{ Voyager::image($course->preview) }});"></a></td>
                         <td>
-                            <div class="training-seminars1__title1"><a href="">Каналы, фракталы, жилые массивы</a></div>
+                            <div class="training-seminars1__title1"><a href="{{ $course->link }}" target="_blank">{{ $course->title }}</a></div>
                         </td>
-                        <td>Приобретено 20.12.2022</td>
-                        <td><a href="" class="training-seminars1__link">На страницу просмотра</a></td>
+                        <td>Приобретено {{ $course->date_start }}</td>
+                        <td><a href="{{ $course->link }}" target="_blank" class="training-seminars1__link">На страницу просмотра</a></td>
                     </tr>
                 @endforeach
-                @foreach($user->services as $service)
+                @foreach($user->services as $key => $service)
+                    <tr>
+                        <td>
+                            <a href="#" data-fancybox data-src="#modal-service-{{ $key }}" class="training-seminars1__video without_icon" style="background-image: url({{ Voyager::image($service->preview) }});"></a>
+                        </td>
+                        <td>
+                            <div class="training-seminars1__title1"><a href="#" data-fancybox data-src="#modal-service-{{ $key }}">{{ $service->title }}</a></div>
+                        </td>
+                        <td>Приобретено {{ $service->date_start }}</td>
+                        <td><a href="#" data-fancybox data-src="#modal-service-{{ $key }}" class="training-seminars1__link without_icon">Просмотр</a></td>
+                        <div class="hidden">
+                            <div id="modal-service-{{ $key }}">
+                                <h2>{{ $service->title }}</h2>
+                                {!! $service->content !!}
+                            </div>
+                        </div>
+                    </tr>
                 @endforeach
-
-                <tr>
-                    <td><a href="https://www.youtube.com/watch?v=A3PDXmYoF5U" data-fancybox class="training-seminars1__video" style="background-image: url(img/vd2.jpg);"></a></td>
-                    <td>
-                        <div class="training-seminars1__title1"><a href="">Как управлять мировой торговлей, не привлекая внимания санитаров</a></div>
-                    </td>
-                    <td>Приобретено 20.12.2022</td>
-                    <td><a href="" class="training-seminars1__link">На страницу просмотра</a></td>
-                </tr>
                 {{--                <tr>
                     <td class="mod1">
                         <div class="show-mobile1">
@@ -200,13 +205,4 @@
             <a href="" class="block-lk1__link-bottom">Все обучающие семинары</a>
         </div>
     </div>
-@stop
-
-@section("javascript")
-    <script>
-        $(document).ready(function () {
-            console.log("test");
-
-        });
-    </script>
 @stop

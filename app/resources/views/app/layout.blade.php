@@ -7,7 +7,7 @@
     <!--[if lt IE 9]> <link href= "css/ie8.css" rel= "stylesheet" media= "all" /> <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ asset("css/style.css") }}" type="text/css" />
-    @yield("css")
+    @vite('resources/scss/app/custom.scss')
 </head>
 
 <body>
@@ -20,16 +20,17 @@
                 <li class="mobile-menu1__item"><a href="">Контакты</a></li>
                 <li class="mobile-menu1__item"><a href="">Pro-канал</a></li>
                 <li class="mobile-menu1__item"><a href="">Еще что-нибудь</a></li>
+                <li class="mobile-menu1__item"><a href="{{ route("user.graphs") }}">Графики</a></li>
             </ul>
         </div>
         <div class="background-top1">
             <div class="page-line">
                 <div class="header mod1">
                     <div class="hide-mobile1">
-                        <a href="" class="header__logo"><img src="img/logo.svg" alt=""></a>
+                        <a href="" class="header__logo"><img src="{{ asset("img/logo.svg") }}" alt=""></a>
                     </div>
                     <div class="show-mobile1">
-                        <a href="" class="header__logo"><img src="img/logo2.svg" alt=""></a>
+                        <a href="" class="header__logo"><img src="{{ asset("img/logo2.svg") }}" alt=""></a>
                     </div>
                     <div class="hide-mobile1">
                         <div class="menu-button1"></div>
@@ -49,6 +50,7 @@
                                 <li class="drop-menu1__menu-item"><a href="">Контакты</a></li>
                                 <li class="drop-menu1__menu-item"><a href="">Pro-канал</a></li>
                                 <li class="drop-menu1__menu-item"><a href="">Еще что-нибудь</a></li>
+                                <li class="drop-menu1__menu-item"><a href="{{ route("user.graphs") }}">Графики</a></li>
                             </ul>
                         </div>
                     </div>
@@ -60,10 +62,10 @@
         </div>
         <div class="background-bottom1">
             <div class="hide-mobile1">
-                <div class="background-bottom1__background" style="background-image: url(img/bg4.jpg);"></div>
+                <div class="background-bottom1__background" style="background-image: url({{ asset("img/bg4.jpg") }});"></div>
             </div>
             <div class="show-mobile1">
-                <div class="background-bottom1__background" style="background-image: url(img/bg7.jpg);"></div>
+                <div class="background-bottom1__background" style="background-image: url({{ asset("img/bg7.jpg") }});"></div>
             </div>
             <div class="page-line">
                 <div class="have-questions1">
@@ -81,7 +83,7 @@
                 <div class="footer1">
                     <div class="footer1__over">
                         <div class="footer1__left">
-                            <a href="" class="footer1__logo"><img src="img/logo.svg" alt=""></a>
+                            <a href="" class="footer1__logo"><img src="{{ asset("img/logo.svg") }}" alt=""></a>
                         </div>
                         <div class="footer1__right">
                             <ul class="menu1">

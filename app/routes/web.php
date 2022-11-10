@@ -35,6 +35,8 @@ Route::post("ajax/check-auth", function() {
 Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
     Route::get("/", [ProfileController::class, "profile"])->name("user.profile");
     Route::get("logout", [ProfileController::class, "logout"])->name("user.logout");
+    Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
+
 });
 
 Route::group(["prefix" => "admin"], function () {
