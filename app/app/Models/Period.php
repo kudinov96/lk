@@ -41,7 +41,7 @@ class Period extends Model
     protected function fullCountNameHuman(): Attribute
     {
         return Attribute::make(
-            get: fn () => num_declension($this->count, __("enums." . $this->count_name)),
+            get: fn () => $this->count . " " . num_declension($this->count, __("enums." . $this->count_name)),
         );
     }
 

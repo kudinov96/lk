@@ -52,7 +52,7 @@ class BotController extends Controller
             Session::setId($session_id);
         }
 
-        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("profile") . "\">личном кабинете</a>";
+        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>";
         $telegramBotService->sendMessage(
             api_token: config("bot.bot_api_token"),
             chat_id: $chat_id,

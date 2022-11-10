@@ -12,7 +12,9 @@ class CreateServicesUser
             $added = $service["added"] === "1" ? true : false;
 
             if ($added) {
-                $item->services()->attach($service["id"]);
+                $item->services()->attach($service["id"], [
+                    "date_start" => now(),
+                ]);
             }
         }
 

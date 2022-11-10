@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $content
  * @property bool   $is_test
  * @property string $color
+ * @property string $icon
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -23,6 +25,22 @@ class Subscription extends Model
     protected $guarded = [
         "id",
     ];
+
+    protected function dateEnd(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => Carbon::parse($this->pivot->date_end)->format("d.m.Y") ?? null,
+        );
+    }
+
+    protected function daysLeftHuman(): Attribute
+    {
+        $daysLeft = $this->pivot ? Carbon::parse($this->pivot->date_end)->diffInDays(now()) : null;
+
+        return Attribute::make(
+            get: fn () => $daysLeft ? num_declension($daysLeft, ["остался", "осталось", "осталось"]) . " " . $daysLeft . " " . num_declension($daysLeft, ["день", "дня", "дней"]): null,
+        );
+    }
 
     public function periods(): BelongsToMany
     {

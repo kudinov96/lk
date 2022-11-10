@@ -68,12 +68,12 @@ class User extends \TCG\Voyager\Models\User
 
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class, "course_users");
+        return $this->belongsToMany(Course::class, "course_users")->withPivot("date_start");
     }
 
     public function services(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class, "service_users");
+        return $this->belongsToMany(Service::class, "service_users")->withPivot("date_start");
     }
 
     public function discounts(): HasMany

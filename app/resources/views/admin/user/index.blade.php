@@ -84,7 +84,7 @@
                                                     <a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" class="user-subscriptions__item" style="background-color: {{ $subscription->color }}">{{ $subscription->title }}</a>
                                                 @endforeach
                                                 @if ($user->courses()->exists())
-                                                    <span class="user-subscriptions__item" style="background-color: #ec8ff5">{{ num_declension($user->courses()->count(), ["курс", "курса", "курсов"]) }}</span>
+                                                    <span class="user-subscriptions__item" style="background-color: #ec8ff5">{{ $user->courses()->count() }} {{ num_declension($user->courses()->count(), ["курс", "курса", "курсов"]) }}</span>
                                                 @endif
                                             </td>
                                             <td>

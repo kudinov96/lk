@@ -12,7 +12,9 @@ class CreateCoursesUser
             $added = $course["added"] === "1" ? true : false;
 
             if ($added) {
-                $item->courses()->attach($course["id"]);
+                $item->courses()->attach($course["id"], [
+                    "date_start" => now(),
+                ]);
             }
         }
 

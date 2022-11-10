@@ -106,12 +106,12 @@ class UserController extends VoyagerUserController
 
     public function store(Request $request)
     {
+        $slug = "users";
+
         $createSubscriptionsUser = new CreateSubscriptionsUser();
         $createServicesUser      = new CreateServicesUser();
         $createCoursesUser       = new CreateCoursesUser();
         $createDiscountsUser     = new CreateDiscountsUser();
-
-        $slug = "users";
 
         $subscriptions = $request->input("subscriptions") ?? [];
         $services      = $request->input("services") ?? [];

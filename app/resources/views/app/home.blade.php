@@ -21,7 +21,7 @@
                     type: "POST",
                     success: function(response) {
                         if (response === "1") {
-                            window.location.href = "{{ route("profile") }}";
+                            window.location.href = "{{ route("user.profile") }}";
                         }
                     },
                 });

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\ProfileController;
 use Illuminate\Support\Facades\Route;
 use TCG\Voyager\Facades\Voyager;
 
@@ -19,7 +20,7 @@ use TCG\Voyager\Facades\Voyager;
 |
 */
 
-Route::get("/", [HomeController::class, "index"]);
+Route::get("/", [HomeController::class, "index"])->name("home");
 
 Route::group(["prefix" => "bot"], function(){
     Route::get("set-webhook", [BotController::class, "setWebhook"])->name("bot.setWebhook");
@@ -31,9 +32,12 @@ Route::post("ajax/check-auth", function() {
     return auth()->user() ? 1 : 0;
 })->name("checkAuth");
 
-Route::get("profile", function() {
-    return "Profile page";
-})->name("profile");
+Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
+    Route::get("/", [ProfileController::class, "profile"])->name("user.profile");
+    Route::get("logout", [ProfileController::class, "logout"])->name("user.logout");
+    Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
+
+});
 
 Route::group(["prefix" => "admin"], function () {
     Voyager::routes();
