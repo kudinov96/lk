@@ -73,10 +73,10 @@ class UserController extends VoyagerUserController
 
     public function create(Request $request)
     {
-        $roles         = Role::all();
-        $subscriptions = Subscription::all();
-        $services      = Service::all();
-        $courses       = Course::all();
+        $roles         = Role::latest()->get();
+        $subscriptions = Subscription::latest()->get();
+        $services      = Service::latest()->get();
+        $courses       = Course::latest()->get();
 
         return response()->view("admin.user.create", compact(
             "roles",
@@ -90,10 +90,10 @@ class UserController extends VoyagerUserController
     {
         $item = User::findOrFail($id);
 
-        $roles         = Role::all();
-        $subscriptions = Subscription::all();
-        $services      = Service::all();
-        $courses       = Course::all();
+        $roles         = Role::latest()->get();
+        $subscriptions = Subscription::latest()->get();
+        $services      = Service::latest()->get();
+        $courses       = Course::latest()->get();
 
         return response()->view("admin.user.edit", compact(
             "item",

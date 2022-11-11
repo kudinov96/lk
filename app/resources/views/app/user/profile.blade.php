@@ -68,7 +68,7 @@
                     </td>
                 </tr>--}}
             </table>
-            <a href="" class="block-lk1__link-bottom">Все варианты подписок</a>
+            <a href="{{ route("user.subscriptions") }}" class="block-lk1__link-bottom">Все варианты подписок</a>
         </div>
         <div class="block-lk1 style2">
             <div class="block-lk1__title-top">Графики с аналитикой</div>
@@ -110,7 +110,7 @@
                     </td>
                 </tr>--}}
             </table>
-            <a href="" class="block-lk1__link-bottom">Все варианты подписок на графики</a>
+            <a href="{{ route("user.subscriptions") }}" class="block-lk1__link-bottom">Все варианты подписок на графики</a>
         </div>
         <div class="block-lk1 style3">
             <div class="block-lk1__title-top">Обучающие семинары</div>
