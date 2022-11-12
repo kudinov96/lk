@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\GraphCategory;
 use App\Models\Subscription;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;

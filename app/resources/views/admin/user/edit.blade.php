@@ -224,10 +224,10 @@
                                 <div class="col-xs-12">
                                     <h4>История оплат</h4>
                                     <div class="payment-history">
-                                        @if($item->payment_history()->exists())
+                                        @if($item->orders()->exists())
                                             <div class="payment-history__items">
-                                                @foreach($item->payment_history as $payment_history_item)
-                                                    <div class="payment-history__item">{{ $payment_history_item->created_at->format("d.m.Y") }} — {{ $payment_history_item->count }} руб. ({{ $payment_history_item->title }})</div>
+                                                @foreach($orders as $order)
+                                                    <div class="payment-history__item">{{ $order->created_at->format("d.m.Y") }} — {{ $order->description }}</div>
                                                 @endforeach
                                             </div>
                                         @else

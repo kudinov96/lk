@@ -60,7 +60,7 @@ class Period extends Model
         }
 
         return [
-            "price"    => $price,
+            "price"    => (int) $price,
             "discount" => $discount->count ?? null,
         ];
     }

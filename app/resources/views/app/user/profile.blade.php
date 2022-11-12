@@ -22,9 +22,9 @@
             <div class="block-lk1__title-top">Ваши подписки</div>
             <table class="table-subscribe1">
                 @foreach($user->subscriptions as $key => $subscription)
-                    <tr>
+                    <tr class="item">
                         <td>
-                            <div class="table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                            <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
                         </td>
                         <td>
                             <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
@@ -32,7 +32,10 @@
                             <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
                         </td>
                         <td>
-                            <a href="" class="table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                            <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                            <div class="subscription-buy__block hidden">
+                                <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                            </div>
                         </td>
                         <div class="hidden">
                             <div id="modal-subscription-{{ $key }}">
@@ -75,7 +78,7 @@
             <table class="table-subscribe1">
                 @foreach($user->subscriptions as $key => $subscription)
                     @foreach($subscription->graph_categories as $category)
-                        <tr>
+                        <tr class="item">
                             <td>
                                 <div class="table-subscribe1__title1"><span>{{ $category->title }}</span> до {{ $subscription->date_end }}</div>
                             </td>
@@ -83,7 +86,12 @@
                             <td>
                                 <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}</div>
                             </td>
-                            <td><a href="" class="table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a></td>
+                            <td>
+                                <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                                <div class="subscription-buy__block hidden">
+                                    <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 @endforeach
@@ -205,4 +213,23 @@
             <a href="" class="block-lk1__link-bottom">Все обучающие семинары</a>
         </div>
     </div>
+
+    <x-subscription-buy-modal></x-subscription-buy-modal>
+@stop
+
+@section("javascript")
+    <x-subscription-buy-js></x-subscription-buy-js>
+
+    <script>
+        $(document).ready(function () {
+
+            $(document).on("click", ".subscription-buy__open", function(e){
+                e.preventDefault();
+
+                $(this).hide();
+                $(this).siblings(".subscription-buy__block").show();
+            });
+
+        });
+    </script>
 @stop

@@ -88,7 +88,8 @@ class UserController extends VoyagerUserController
 
     public function edit(Request $request, $id)
     {
-        $item = User::findOrFail($id);
+        $item   = User::findOrFail($id);
+        $orders = $item->orders()->onlyConfirmed()->get();
 
         $roles         = Role::latest()->get();
         $subscriptions = Subscription::latest()->get();
@@ -97,6 +98,7 @@ class UserController extends VoyagerUserController
 
         return response()->view("admin.user.edit", compact(
             "item",
+            "orders",
             "roles",
             "subscriptions",
             "services",
