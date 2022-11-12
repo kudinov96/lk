@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Subscription;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,17 @@ class ProfileController extends Controller
 
         return response()->view("app.user.graphs", compact(
             "user",
+        ));
+    }
+
+    public function subscriptions(): Response
+    {
+        $user          = auth()->user();
+        $subscriptions = Subscription::latest()->get();
+
+        return response()->view("app.user.subscriptions", compact(
+            "user",
+            "subscriptions",
         ));
     }
 }

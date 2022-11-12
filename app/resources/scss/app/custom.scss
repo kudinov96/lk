@@ -7,3 +7,30 @@
         display: none;
     }
 }
+
+.modal-payment{
+    h2{
+        margin-bottom: 5px;
+    }
+    .modal-order-title{
+        margin-bottom: 15px;
+    }
+    label{
+        display: block;
+        margin-bottom: 15px;
+        &:last-child{
+            margin-bottom: 0;
+        }
+    }
+    input{
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px 15px;
+        width: 100%;
+        display: block;
+    }
+}
+
+.table-subscribe1__days-left{
+    padding-right: 30px;
+}

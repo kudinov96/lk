@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\OrderController;
+use App\Http\Controllers\Front\PaymentTinkoffController;
 use App\Http\Controllers\Front\ProfileController;
 use Illuminate\Support\Facades\Route;
 use TCG\Voyager\Facades\Voyager;
@@ -36,7 +38,19 @@ Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
     Route::get("/", [ProfileController::class, "profile"])->name("user.profile");
     Route::get("logout", [ProfileController::class, "logout"])->name("user.logout");
     Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
+    Route::get("subscriptions", [ProfileController::class, "subscriptions"])->name("user.subscriptions");
+});
 
+Route::group(["prefix" => "payment", "middleware" => "auth"], function(){
+    Route::post("tinkoff/callback ", [PaymentTinkoffController::class, "callback"])->name("payment.tinkoff.callback");
+    Route::get("tinkoff/success", [PaymentTinkoffController::class, "success"])->name("payment.tinkoff.success");
+    Route::get("tinkoff/fail", [PaymentTinkoffController::class, "fail"])->name("payment.tinkoff.fail");
+
+    Route::post("order", [OrderController::class, "store"])->name("order.create");
+});
+
+Route::group(["prefix" => "order", "middleware" => "auth"], function(){
+    Route::post("/", [OrderController::class, "store"])->name("order.create");
 });
 
 Route::group(["prefix" => "admin"], function () {
