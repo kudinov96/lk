@@ -14,13 +14,37 @@ use Illuminate\Http\Response;
 
 class PaymentTinkoffController extends Controller
 {
-    public function callback(Request $request)
+    public function callback(Request $request): void
     {
-        return "CALLBACK";
+        if ($request->Status === OrderStatus::CONFIRMED->value) {
+            $this->statusConfirmed($request);
+        }
     }
 
-    public function success(Request $request, UpdateOrder $updateOrder, CreateSubscriptionsUser $createSubscriptions, UpdateSubscriptionsUser $updateSubscriptions): Response
+    public function success(Request $request): Response
     {
+        $this->statusConfirmed($request);
+
+        return response()->view("app.user.payment.success");
+    }
+
+    public function fail(Request $request, UpdateOrder $updateOrder): Response
+    {
+        $order = Order::findOrFail($request->OrderId);
+
+        $updateOrder->handel($order, [
+            "status" => OrderStatus::REJECTED->value,
+        ]);
+
+        return response()->view("app.user.payment.fail");
+    }
+
+    private function statusConfirmed(Request $request)
+    {
+        $updateOrder         = new UpdateOrder();
+        $createSubscriptions = new CreateSubscriptionsUser();
+        $updateSubscriptions = new UpdateSubscriptionsUser();
+
         $order  = Order::findOrFail($request->OrderId);
         $period = Period::findOrFail($order->period_id);
         $user   = $order->user;
@@ -46,18 +70,5 @@ class PaymentTinkoffController extends Controller
                 ],
             ]);
         }
-
-        return response()->view("app.user.payment.success");
-    }
-
-    public function fail(Request $request, UpdateOrder $updateOrder): Response
-    {
-        $order = Order::findOrFail($request->OrderId);
-
-        $updateOrder->handel($order, [
-            "status" => OrderStatus::REJECTED->value,
-        ]);
-
-        return response()->view("app.user.payment.fail");
     }
 }
