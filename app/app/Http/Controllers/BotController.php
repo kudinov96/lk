@@ -27,12 +27,28 @@ class BotController extends Controller
     public function webhook(Request $request, TelegramBotService $telegramBotService)
     {
         $message            = $request->input("message.text");
-        $session_id         = str_replace("/start auth", "", $message);
         $chat_id            = $request->input("message.chat.id");
-        $user_telegram_name = $request->input("message.from.username");
         $user_telegram_id   = $request->input("message.from.id");
+
+        if ($chat_id !== $user_telegram_id)  {
+            return;
+        }
+
+        if (strripos($message, "/start auth") === 0) {
+            $this->auth($request, $telegramBotService);
+        }
+    }
+
+    private function auth(Request $request, TelegramBotService $telegramBotService)
+    {
+        $message            = $request->input("message.text");
+        $chat_id            = $request->input("message.chat.id");
+        $session_id         = str_replace("/start auth", "", $message);
+        $user_telegram_id   = $request->input("message.from.id");
+        $user_telegram_name = $request->input("message.from.username");
         $user_firstname     = $request->input("message.from.first_name") ?? "";
         $user_lastname      = $request->input("message.from.last_name") ?? "";
+
         $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($user) {
