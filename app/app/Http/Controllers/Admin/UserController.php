@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\TelegramMessage\CreateTelegramMessage;
 use App\Actions\User\CreateCoursesUser;
 use App\Actions\User\CreateDiscountsUser;
 use App\Actions\User\CreateServicesUser;
@@ -13,13 +14,16 @@ use App\Actions\User\DeleteSubscriptionsUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
 use App\Actions\User\UpdateSubscriptionsUser;
+use App\Enums\TelegramMessageFrom;
 use App\Models\Course;
 use App\Models\GraphCategory;
 use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\TelegramBotService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\VoyagerUserController;
@@ -234,6 +238,36 @@ class UserController extends VoyagerUserController
 
         return [
             "success" => true,
+        ];
+    }
+
+    public function sendTelegramMessage(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage): array
+    {
+        $message = $request->input("message");
+        $user    = User::findOrFail($request->input("user_id"));
+
+        if (!$telegramBotService->sendMessage(
+            api_token: config("bot.bot_api_token"),
+            chat_id: $user->telegram_id,
+            text: $message,
+        )) {
+            return [
+                "success" => false,
+            ];
+        }
+
+        $message = $createTelegramMessage->handle([
+            "user_id" => $user->id,
+            "text"    => $message,
+            "from"    => TelegramMessageFrom::BOT->value,
+        ]);
+
+        return [
+            "success" => true,
+            "data"    => Blade::render('<x-telegram-message :message="$message" :user="$user"></x-telegram-message>', [
+                "message" => $message,
+                "user"    => $user,
+            ]),
         ];
     }
 }

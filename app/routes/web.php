@@ -66,6 +66,7 @@ Route::group(["prefix" => "admin"], function () {
     Route::post("users", [UserController::class, "store"])->name("voyager.users.store");
     Route::put("users/{id}", [UserController::class, "update"])->name("voyager.users.update");
     Route::post("users/actions", [UserController::class, "actions"])->name("voyager.users.actions");
+    Route::post("users/send-telegram-message", [UserController::class, "sendTelegramMessage"])->name("voyager.users.send-telegram-message");
 
     Route::post("ajax/subscription/periods", [SubscriptionController::class, "periods"])->name("voyager.subscription.periods");
 
