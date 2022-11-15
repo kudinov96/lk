@@ -1,19 +1,24 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Авторизация</h1>
-    <p><a target="_blank" href="https://t.me/{{ $botName }}?start=auth{{ $sessionId }}">Войти через Telegram</a></p>
+@extends("app.layout")
+@section('title', 'Вход в кабинет')
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script>
+@section("content")
+<div class="page-line">
+	<h1>Авторизация</h1>
+   
+	<br>
+	<div class="block-lk1">
+		<a target="_blank" href="https://t.me/{{ $botName }}?start=auth{{ $sessionId }}" class="block-lk1__link-bottom">
+			<span>Войти через Telegram</span>
+		</a>
+	</div>
+	<br>
+	<br>
+
+</div>
+@stop
+
+@section("javascript")
+<script>
         $(document).ready(function() {
             setInterval(function() {
                 $.ajax({
@@ -30,3 +35,5 @@
     </script>
 </body>
 </html>
+
+@stop

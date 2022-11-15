@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <title>title</title>
+    <title>@yield('title')</title>
     <!--[if lt IE 9]> <link href= "css/ie8.css" rel= "stylesheet" media= "all" /> <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ asset("css/style.css") }}" type="text/css" />
@@ -16,10 +16,7 @@
         <div class="mobile-menu1">
             <div class="mobile-menu1__black"></div>
             <ul class="mobile-menu1__list">
-                <li class="mobile-menu1__item"><a href="">Семинар</a></li>
-                <li class="mobile-menu1__item"><a href="">Контакты</a></li>
-                <li class="mobile-menu1__item"><a href="">Pro-канал</a></li>
-                <li class="mobile-menu1__item"><a href="">Еще что-нибудь</a></li>
+               <li class="mobile-menu1__item"><a href="{{ route("user.graphs") }}">Профиль</a></li>
                 <li class="mobile-menu1__item"><a href="{{ route("user.graphs") }}">Графики</a></li>
             </ul>
         </div>
@@ -46,10 +43,7 @@
                         <div class="drop-menu1__close"><i></i></div>
                         <div class="drop-menu1__over">
                             <ul class="drop-menu1__menu">
-                                <li class="drop-menu1__menu-item"><a href="">Семинар</a></li>
-                                <li class="drop-menu1__menu-item"><a href="">Контакты</a></li>
-                                <li class="drop-menu1__menu-item"><a href="">Pro-канал</a></li>
-                                <li class="drop-menu1__menu-item"><a href="">Еще что-нибудь</a></li>
+                                <li class="drop-menu1__menu-item"><a href="{{ route("user.graphs") }}">Профиль</a></li>
                                 <li class="drop-menu1__menu-item"><a href="{{ route("user.graphs") }}">Графики</a></li>
                             </ul>
                         </div>
