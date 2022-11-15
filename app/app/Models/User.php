@@ -90,4 +90,9 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->hasMany(TelegramMessage::class, "user_id");
     }
+
+    public function hasNotReadTelegramMessages(): bool
+    {
+        return $this->telegram_messages()->where("is_read", false)->exists();
+    }
 }

@@ -246,3 +246,13 @@
 .telegram-chat__form{
     margin-top: 15px;
 }
+
+.tg-chat{
+    display: flex;
+    align-items: center;
+    img{
+        display: block;
+        margin-left: 10px;
+        width: 16px;
+    }
+}
