@@ -252,6 +252,23 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="panel panel panel-bordered panel-warning">
+                        <div class="panel-body">
+                            <h4>Чат в Telegram</h4>
+                            <div class="telegram-chat">
+                                <div id="telegram-chat-block" class="telegram-chat__block" data-page="2">
+                                    @foreach($telegram_messages as $message)
+                                        <x-telegram-message :message="$message" :user="$item"></x-telegram-message>
+                                    @endforeach
+                                </div>
+                                <div id="telegram-chat-form" class="telegram-chat__form">
+                                    <textarea class="form-control" name="message"></textarea>
+                                    <button type="button" class="btn btn-success">Отправить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -479,6 +496,77 @@
                 $item.find('.select2').show();
                 $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
             });
+
+            const telegramChatblock = document.getElementById("telegram-chat-block");
+            telegramChatblock.scrollTop = telegramChatblock.scrollHeight;
+
+            $("#telegram-chat-block").scroll(function(){
+                let $this = $(this);
+                let page  = $this.data("page");
+
+                if (telegramChatblock.scrollTop === 0) {
+                    $.ajax({
+                        url: "{{ route("voyager.users.telegram-messages") }}",
+                        type: "POST",
+                        data: {
+                            page,
+                        },
+                        success: function(response) {
+                            console.log(response);
+
+                            if (response.success === true) {
+                                if (response.data) {
+                                    $("#telegram-chat-block").prepend(response.data);
+                                    telegramChatblock.scrollTop = 50;
+                                }
+
+                                page++;
+                                $this.data("page", page);
+                            }
+                        },
+                    });
+                }
+            });
+
+            $("#telegram-chat-form").on("click", "button", function(){
+                let $textarea = $(this).siblings('textarea[name="message"]');
+                let message   = $textarea.val();
+                let user_id   = {{ $item->id }};
+
+                if (message !== "") {
+                    $.ajax({
+                        url: "{{ route("voyager.users.send-telegram-message") }}",
+                        type: "POST",
+                        data: {
+                            message,
+                            user_id,
+                        },
+                        success: function(response) {
+                            console.log(response);
+
+                            if (response.success === true) {
+                                $textarea.val("");
+                            }
+                        },
+                    });
+                }
+            });
+
+            setInterval(function() {
+                $.ajax({
+                    url: "{{ route("voyager.users.new-telegram-messages") }}",
+                    type: "POST",
+                    success: function(response) {
+                        if (response.success === true) {
+                            if (response.data) {
+                                $("#telegram-chat-block").append(response.data);
+                                telegramChatblock.scrollTop = telegramChatblock.scrollHeight;
+                            }
+                        }
+                    },
+                });
+            }, 1000);
+
         });
     </script>
 @stop

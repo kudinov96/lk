@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\TelegramMessage\CreateTelegramMessage;
+use App\Enums\TelegramMessageFrom;
 use App\Models\User;
 use App\Services\TelegramBotService;
 use Illuminate\Http\Request;
@@ -24,22 +26,26 @@ class BotController extends Controller
         return $telegramBotService->getWebhookInfo(config("bot.bot_api_token"));
     }
 
-    public function webhook(Request $request, TelegramBotService $telegramBotService)
+    public function webhook(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage)
     {
-        $message            = $request->input("message.text");
-        $chat_id            = $request->input("message.chat.id");
-        $user_telegram_id   = $request->input("message.from.id");
+        $message          = $request->input("message.text");
+        $chat_id          = $request->input("message.chat.id");
+        $user_telegram_id = $request->input("message.from.id");
+
+        $user             = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($chat_id !== $user_telegram_id)  {
             return;
         }
 
         if (strripos($message, "/start auth") === 0) {
-            $this->auth($request, $telegramBotService);
+            $this->authMessage($request, $telegramBotService, $createTelegramMessage);
+        } elseif ($user) {
+            $this->message($request, $user, $createTelegramMessage);
         }
     }
 
-    private function auth(Request $request, TelegramBotService $telegramBotService)
+    private function authMessage(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage)
     {
         $message            = $request->input("message.text");
         $chat_id            = $request->input("message.chat.id");
@@ -56,7 +62,7 @@ class BotController extends Controller
             Session::setId($session_id);
             $user->sessions()->where("id", "!=", $session_id)->delete();
         } else {
-            $new_user = User::query()->create([
+            $user = User::query()->create([
                 "name"          => $user_firstname . " " . $user_lastname,
                 "email"         => Str::random(15) . "@" . Str::random(5) . ".com",
                 "password"      => Hash::make(Str::random(20)),
@@ -64,15 +70,33 @@ class BotController extends Controller
                 "telegram_name" => $user_telegram_name,
             ]);
 
-            Auth::login($new_user);
+            Auth::login($user);
             Session::setId($session_id);
         }
 
         $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>";
-        $telegramBotService->sendMessage(
+
+        if ($telegramBotService->sendMessage(
             api_token: config("bot.bot_api_token"),
             chat_id: $chat_id,
             text: $text,
-        );
+        )) {
+            $createTelegramMessage->handle([
+                "user_id" => $user->id,
+                "text"    => $text,
+                "from"    => TelegramMessageFrom::BOT->value,
+            ]);
+        }
+    }
+
+    private function message(Request $request, User $user, CreateTelegramMessage $createTelegramMessage)
+    {
+        $createTelegramMessage->handle([
+            "user_id"    => $user->id,
+            "text"       => $request->input("message.text"),
+            "from"       => TelegramMessageFrom::USER->value,
+            "created_at" => $request->input("message.date"),
+            "updated_at" => $request->input("message.date"),
+        ]);
     }
 }

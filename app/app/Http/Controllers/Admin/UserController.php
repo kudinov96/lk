@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\TelegramMessage\CreateTelegramMessage;
 use App\Actions\User\CreateCoursesUser;
 use App\Actions\User\CreateDiscountsUser;
 use App\Actions\User\CreateServicesUser;
@@ -13,13 +14,17 @@ use App\Actions\User\DeleteSubscriptionsUser;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\UpdateBanUser;
 use App\Actions\User\UpdateSubscriptionsUser;
+use App\Enums\TelegramMessageFrom;
 use App\Models\Course;
 use App\Models\GraphCategory;
 use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\TelegramBotService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\VoyagerUserController;
@@ -88,8 +93,17 @@ class UserController extends VoyagerUserController
 
     public function edit(Request $request, $id)
     {
-        $item   = User::findOrFail($id);
-        $orders = $item->orders()->onlyConfirmed()->get();
+        $item              = User::findOrFail($id);
+        $orders            = $item->orders()->onlyConfirmed()->get();
+        $telegram_messages = $item->telegram_messages()
+            ->orderBy("created_at", "DESC")
+            ->take(20)
+            ->get()
+            ->reverse();
+
+        $item->telegram_messages()->where("is_read", false)->update([
+            "is_read" => true
+        ]);
 
         $roles         = Role::latest()->get();
         $subscriptions = Subscription::latest()->get();
@@ -99,6 +113,7 @@ class UserController extends VoyagerUserController
         return response()->view("admin.user.edit", compact(
             "item",
             "orders",
+            "telegram_messages",
             "roles",
             "subscriptions",
             "services",
@@ -235,5 +250,87 @@ class UserController extends VoyagerUserController
         return [
             "success" => true,
         ];
+    }
+
+    public function sendTelegramMessage(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage): array
+    {
+        $message = $request->input("message");
+        $user    = User::findOrFail($request->input("user_id"));
+
+        if (!$telegramBotService->sendMessage(
+            api_token: config("bot.bot_api_token"),
+            chat_id: $user->telegram_id,
+            text: $message,
+        )) {
+            return [
+                "success" => false,
+            ];
+        }
+
+        $createTelegramMessage->handle([
+            "user_id" => $user->id,
+            "text"    => $message,
+            "from"    => TelegramMessageFrom::BOT->value,
+        ]);
+
+        return [
+            "success" => true,
+        ];
+    }
+
+    public function telegramMessages(Request $request)
+    {
+        $user = auth()->user();
+        $page = (int) $request->input("page");
+
+        $telegram_messages = $user->telegram_messages()
+            ->orderBy("created_at", "DESC")
+            ->paginate(
+                perPage: 20,
+                page: $page,
+            )
+            ->reverse();
+
+        $html = $this->generateMessagesHtml($telegram_messages);
+
+        return [
+            "success" => true,
+            "data"    => $html,
+        ];
+    }
+
+    public function newTelegramMessages()
+    {
+        $user = auth()->user();
+
+        $telegram_messages = $user->telegram_messages()
+            ->where("is_read", false)
+            ->orderBy("created_at", "DESC")
+            ->get()
+            ->reverse();
+
+        $user->telegram_messages()->where("is_read", false)->update([
+            "is_read" => true
+        ]);
+
+        $html = $this->generateMessagesHtml($telegram_messages);
+
+        return [
+            "success" => true,
+            "data"    => $html,
+        ];
+    }
+
+    private function generateMessagesHtml(Collection $telegram_messages): string
+    {
+        $html = "";
+        foreach ($telegram_messages as $message) {
+            $html .= Blade::render('<x-telegram-message :message="$message" :user="$user"></x-telegram-message>', [
+                "message" => $message,
+                "user"    => $message->user,
+            ]);
+        }
+
+        return $html;
     }
 }

@@ -209,7 +209,7 @@
 }
 
 .payment-history{
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     padding: 20px;
     background-color: #F1F1F1;
@@ -220,4 +220,29 @@
     &:last-child{
         margin-bottom: 0;
     }
+}
+
+.telegram-chat__block{
+    width: 100%;
+    height: 230px;
+    border: 1px solid #000;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 15px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.telegram-chat__bot{
+    color: #22a7f0;
+    font-weight: 700;
+}
+
+.telegram-chat__user{
+    color: #2ecc71;
+    font-weight: 700;
+}
+
+.telegram-chat__form{
+    margin-top: 15px;
 }
