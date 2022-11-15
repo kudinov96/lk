@@ -94,8 +94,11 @@
                                                 <a href="{{ route("voyager.users.edit", ["id" => $user->id]) }}" title="Изменить" class="btn btn-sm btn-primary pull-right edit">
                                                     <i class="voyager-edit"></i>
                                                 </a>
-                                                <a href="{{ route("voyager.users.edit", ["id" => $user->id]) }}" class="btn btn-sm btn-tg pull-right tg-chat">
+                                                <a href="{{ route("voyager.users.edit", ["id" => $user->id]) }}#telegram-chat-block-wrap" class="btn btn-sm btn-tg pull-right tg-chat">
                                                     Написать в Telegram
+                                                    @if($user->hasNotReadTelegramMessages())
+                                                        <img src="{{ asset("img/red-star.png") }}" alt="">
+                                                    @endif
                                                 </a>
                                             </td>
                                         </tr>

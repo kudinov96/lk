@@ -253,7 +253,7 @@
                         </div>
                     </div>
 
-                    <div class="panel panel panel-bordered panel-warning">
+                    <div class="panel panel panel-bordered panel-warning" id="telegram-chat-block-wrap">
                         <div class="panel-body">
                             <h4>Чат в Telegram</h4>
                             <div class="telegram-chat">
