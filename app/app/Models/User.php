@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\TelegramMessageFrom;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -93,6 +94,11 @@ class User extends \TCG\Voyager\Models\User
 
     public function hasNotReadTelegramMessages(): bool
     {
-        return $this->telegram_messages()->where("is_read", false)->exists();
+        return $this->telegram_messages()
+            ->where([
+                ["is_read", false],
+                ["from", TelegramMessageFrom::USER->value],
+            ])
+            ->exists();
     }
 }

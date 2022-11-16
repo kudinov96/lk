@@ -79,7 +79,7 @@
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][id]" value="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][updated]" value="0">
                                                         <div class="user-page-update__item-title"><a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" target="_blank">{{ $subscription->title }}</a> до <span>{{ $subscription->date_end }}</span></div>
-                                                        <select name="update_subscriptions[{{ $key }}][period]" class="select2">
+                                                        <select name="update_subscriptions[{{ $key }}][period]" class="select2 extend-subscription-select">
                                                             <option value="">Выберите период</option>
                                                             @foreach($subscription->periods as $period)
                                                                 <option value="{{ $period->full_count_name }}">{{ $period->full_count_name_human }}</option>
@@ -566,7 +566,6 @@
                     },
                 });
             }, 1000);
-
         });
     </script>
 @stop
