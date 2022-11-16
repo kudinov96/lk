@@ -36,15 +36,17 @@
                         <div class="menu-button2"></div>
                     </div>
                     <div class="header__right">
-                        <a href="tel:+79933570331" class="header__phone mod1">+7 993 3570331</a>
-                        <div class="header__callback2"><a href=""><span>Все контакты</span> →</a></div>
+                        <a href="tel:{{ setting('site.manager_phone') }}" class="header__phone mod1">{{ setting('site.manager_phone') }}</a>
+                        <div class="header__callback2"><a href="#contacts"><span>Все контакты</span> →</a></div>
+						@can('browse_admin')
+							<div class="header__callback2"><a target="_blank" href="/admin"><span>Админ-панель</span></a></div>
+						@endcan
                     </div>
-                    <div class="drop-menu1">
+					<div class="drop-menu1">
                         <div class="drop-menu1__close"><i></i></div>
                         <div class="drop-menu1__over">
                             <ul class="drop-menu1__menu">
-                                <li class="drop-menu1__menu-item"><a href="{{ route("user.graphs") }}">Профиль</a></li>
-                                <li class="drop-menu1__menu-item"><a href="{{ route("user.graphs") }}">Графики</a></li>
+								@widget('MainMenu', [ "menu" => "header_menu", "menu_class" => "drop-menu1__menu-item" ])
                             </ul>
                         </div>
                     </div>
@@ -61,7 +63,7 @@
             <div class="show-mobile1">
                 <div class="background-bottom1__background" style="background-image: url({{ asset("img/bg7.jpg") }});"></div>
             </div>
-            <div class="page-line">
+            <div class="page-line" id="contacts">
                 <div class="have-questions1">
                     <div class="have-questions1__left">
                         <div class="have-questions1__title1">Есть <br>вопросы?</div>
@@ -69,8 +71,8 @@
                     <div class="have-questions1__right">
                         <div class="have-questions1__title2">Задайте их моему личному менеджеру:</div>
                         <div class="have-questions1__list">
-                            <a href="" class="have-questions1__link icon1">@Manager_Romana_Andreeva</a>
-                            <a href="tel:+79933570331" class="have-questions1__link icon2">+7 993 3570331</a>
+                            <a href="https://t.me/{{ setting('site.manager_tg') }}" class="have-questions1__link icon1">{{'@'}}{{ setting('site.manager_tg') }}</a>
+                            <a href="tel:{{ setting('site.manager_phone') }}" class="have-questions1__link icon2">{{ setting('site.manager_phone') }}</a>
                         </div>
                     </div>
                 </div>
@@ -81,14 +83,11 @@
                         </div>
                         <div class="footer1__right">
                             <ul class="menu1">
-                                <li class="menu1__item"><a href="">Главная страница</a></li>
-                                <li class="menu1__item"><a href="">Семинар 2022</a></li>
-                                <li class="menu1__item"><a href="">Pro-канал</a></li>
+								@widget('MainMenu', [ "menu" => "footer_menu_1", "menu_class" => "menu1__item" ])
                             </ul>
                             <ul class="menu2">
-                                <li class="menu2__item"><a href="">Политика конфиденциальности</a></li>
-                                <li class="menu2__item"><a href="">Оплата и возврат</a></li>
-                            </ul>
+								@widget('MainMenu', [ "menu" => "footer_menu_2", "menu_class" => "menu2__item" ])
+							</ul>
                         </div>
                     </div>
                 </div>
