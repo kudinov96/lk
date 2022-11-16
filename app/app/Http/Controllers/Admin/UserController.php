@@ -259,7 +259,7 @@ class UserController extends VoyagerUserController
 
         if (!$telegramBotService->sendMessage(
             api_token: config("bot.bot_api_token"),
-            chat_id: $user->telegram_id,
+            chat_id: $user->telegram_id ?? 0,
             text: $message,
         )) {
             return [
@@ -280,10 +280,11 @@ class UserController extends VoyagerUserController
 
     public function telegramMessages(Request $request)
     {
-        $user = auth()->user();
+        $user = User::findOrFail($request->input("user_id"));
         $page = (int) $request->input("page");
 
         $telegram_messages = $user->telegram_messages()
+            ->orderBy("id", "DESC")
             ->orderBy("created_at", "DESC")
             ->paginate(
                 perPage: 20,
@@ -299,13 +300,16 @@ class UserController extends VoyagerUserController
         ];
     }
 
-    public function newTelegramMessages()
+    public function newTelegramMessages(Request $request)
     {
-        $user = auth()->user();
+        $user            = User::findOrFail($request->input("user_id"));
+        $last_message_id = (int) $request->input("last_message_id") ?? 0;
 
         $telegram_messages = $user->telegram_messages()
             ->where("is_read", false)
+            ->orderBy("id", "DESC")
             ->orderBy("created_at", "DESC")
+            ->where("id", ">", $last_message_id)
             ->get()
             ->reverse();
 
