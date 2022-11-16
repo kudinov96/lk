@@ -45,6 +45,23 @@ class Period extends Model
         );
     }
 
+    public function fullDescription(int $subscription_id): string
+    {
+        $priceAfterDiscount = $this->priceAfterDiscount($subscription_id);
+
+        if (!$priceAfterDiscount["discount"]) {
+            return $this->full_count_name_human . " — " . $this->pivot->price . " руб.";
+        }
+
+        return $priceAfterDiscount["price"] . " руб. (скидка " . $priceAfterDiscount["discount"] . "%)";
+    }
+
+    public function fullPaymentDescription(int $subscription_id): string
+    {
+        $subscription = Subscription::findOrFail($subscription_id);
+        return "Заказ подписки \"$subscription->title\": $this->full_count_name_human " . $this->fullDescription($subscription_id);
+    }
+
     public function priceAfterDiscount(int $subscription_id): array
     {
         $user     = auth()->user();

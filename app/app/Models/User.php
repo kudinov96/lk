@@ -19,6 +19,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $telegram_name
  * @property int    $telegram_id
  * @property bool   $is_ban
+ * @property string $fio
+ * @property string $phone
  */
 class User extends \TCG\Voyager\Models\User
 {
@@ -36,6 +38,8 @@ class User extends \TCG\Voyager\Models\User
         'telegram_id',
         'telegram_name',
         'is_ban',
+        'fio',
+        'phone',
     ];
 
     /**

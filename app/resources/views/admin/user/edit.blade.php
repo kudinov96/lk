@@ -77,22 +77,28 @@
                                         <div class="form-group">
                                             <div class="user-page-update__subscriptions">
                                                 @foreach($item->subscriptions as $key => $subscription)
-                                                    <div class="user-page-update__item" data-number="{{ $key }}" data-subscription-id="{{ $subscription->id }}">
+                                                    <div class="user-page-update__subscription-item" data-number="{{ $key }}" data-subscription-id="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][id]" value="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][updated]" value="0">
                                                         <div class="user-page-update__item-title"><a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" target="_blank">{{ $subscription->title }}</a> до <span>{{ $subscription->date_end }}</span></div>
-                                                        <select name="update_subscriptions[{{ $key }}][period]" class="select2 extend-subscription-select">
-                                                            <option value="">Выберите период</option>
-                                                            @foreach($subscription->periods as $period)
-                                                                <option value="{{ $period->full_count_name }}">{{ $period->full_count_name_human }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="btn btn-primary extend_subscription">Продлить</div>
-                                                        <div class="user-page__subscriptions-auto">
-                                                            <span>Автопродление</span>
-                                                            <input type="checkbox" name="update_subscriptions[{{ $key }}][is_auto_renewal]" class="toggleswitch" @if($subscription->pivot->is_auto_renewal) checked @endif>
+                                                        <div class="user-page-update__item-block">
+                                                            <select name="update_subscriptions[{{ $key }}][period]" class="select2 extend-subscription-select">
+                                                                <option value="">Выберите период</option>
+                                                                @foreach($subscription->periods as $period)
+                                                                    <option value="{{ $period->full_count_name }}">{{ $period->full_count_name_human }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <div class="user-page__subscriptions-bill">
+                                                                <span>Выставить счет?</span>
+                                                                <input type="checkbox" name="update_subscriptions[{{ $key }}][bill]" class="toggleswitch">
+                                                            </div>
+                                                            <div class="btn btn-primary extend_subscription">Продлить</div>
+                                                            <div class="user-page__subscriptions-auto">
+                                                                <span>Автопродление</span>
+                                                                <input type="checkbox" name="update_subscriptions[{{ $key }}][is_auto_renewal]" class="toggleswitch" @if($subscription->pivot->is_auto_renewal) checked @endif>
+                                                            </div>
+                                                            <div class="btn btn-danger remove_update_subscription"><i class="voyager-trash"></i> Удалить</div>
                                                         </div>
-                                                        <div class="btn btn-danger remove_update_subscription"><i class="voyager-trash"></i> Удалить</div>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -220,6 +226,22 @@
                                             <div class="btn btn-success add_discount"><i class="voyager-plus"></i> Добавить скидку</div>
                                             <input type="hidden" name="discounts[0][added]" value="0" />
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12">
+                                    <h4>Платежные даные</h4>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="fio" placeholder="ФИО"
+                                               value="{{ $item->fio ?? "" }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="email" placeholder="E-mail"
+                                               value="{{ $item->email ?? "" }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="phone" placeholder="Телефон"
+                                               value="{{ $item->phone ?? "" }}">
                                     </div>
                                 </div>
 
@@ -491,11 +513,12 @@
             });
 
             $(document).on("click", ".extend_subscription", function() {
-                let $item  = $(this).closest(".user-page-update__item");
+                let $item  = $(this).closest(".user-page-update__subscription-item");
                 let number = $item.data("number");
 
                 $(this).remove();
                 $item.find('.select2').show();
+                $item.find('.user-page__subscriptions-bill').show();
                 $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
             });
 

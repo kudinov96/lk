@@ -14,12 +14,32 @@
             let $item             = $(this).closest(".item");
             let subscription_id   = $(this).data("subscription-id");
             let period_id         = $item.find(".item__current-period").data("period-id");
-            let order_title       = "Заказ подписки \"" + $item.find(".item__title").text() + "\": " + $item.find(".item__current-period").text();
+            let order_title       = "";
 
-            $form.find(".modal-order-title").html(order_title);
-            $form.find('input[name="description"]').val(order_title);
-            $form.find('input[name="subscription_id"]').val(subscription_id);
-            $form.find('input[name="period_id"]').val(period_id);
+            $.ajax({
+                url: "{{ route("voyager.subscription.period.full-description") }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    subscription_id,
+                    period_id,
+                },
+                success: function(response) {
+                    if (response.success === true) {
+                        order_title = response.data;
+
+                        $form.find(".modal-order-title").html(order_title);
+                        $form.find('input[name="description"]').val(order_title);
+                        $form.find('input[name="subscription_id"]').val(subscription_id);
+                        $form.find('input[name="period_id"]').val(period_id);
+
+                        /*$.fancybox({
+                            href: '#modal-subscription-payment',
+                            modal: true
+                        });*/
+                    }
+                },
+            });
         });
 
         $("#subscription-payment").on("submit", function(e) {
