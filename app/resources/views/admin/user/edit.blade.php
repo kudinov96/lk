@@ -11,6 +11,8 @@
 
 @section('content')
     <div class="page-content container-fluid user-page">
+        @include('voyager::alerts')
+
         <form class="form-edit-add" action="{{ route("voyager.users.update", ["id" => $item->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method("PUT")
@@ -501,8 +503,9 @@
             telegramChatblock.scrollTop = telegramChatblock.scrollHeight;
 
             $("#telegram-chat-block").scroll(function(){
-                let $this = $(this);
-                let page  = $this.data("page");
+                let $this   = $(this);
+                let page    = $this.data("page");
+                let user_id = {{ $item->id }};
 
                 if (telegramChatblock.scrollTop === 0) {
                     $.ajax({
@@ -510,6 +513,7 @@
                         type: "POST",
                         data: {
                             page,
+                            user_id,
                         },
                         success: function(response) {
                             console.log(response);
@@ -544,8 +548,9 @@
                         success: function(response) {
                             console.log(response);
 
-                            if (response.success === true) {
-                                $textarea.val("");
+                            $textarea.val("");
+                            if (response.success === false) {
+                                $("#telegram-chat-block").append("<p class='error'>Сообщение не может быть доставлено</p>");
                             }
                         },
                     });
@@ -553,9 +558,16 @@
             });
 
             setInterval(function() {
+                let user_id = {{ $item->id }};
+                let last_message_id = $("#telegram-chat-block").find(".telegram-chat__message").last().data("id");
+
                 $.ajax({
                     url: "{{ route("voyager.users.new-telegram-messages") }}",
                     type: "POST",
+                    data: {
+                        user_id,
+                        last_message_id,
+                    },
                     success: function(response) {
                         if (response.success === true) {
                             if (response.data) {
