@@ -38,7 +38,8 @@ Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
     Route::get("/", [ProfileController::class, "profile"])->name("user.profile");
     Route::get("logout", [ProfileController::class, "logout"])->name("user.logout");
     Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
-    Route::get("subscriptions", [ProfileController::class, "subscriptions"])->name("user.subscriptions");
+    Route::get("subscriptions/with-categories", [ProfileController::class, "subscriptionsWithCategories"])->name("user.subscriptions-with-categories");
+    Route::get("subscriptions/without-categories", [ProfileController::class, "subscriptionsWithoutCategories"])->name("user.subscriptions-without-categories");
 });
 
 Route::group(["prefix" => "payment", "middleware" => "auth"], function(){

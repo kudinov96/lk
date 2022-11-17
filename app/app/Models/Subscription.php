@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -60,5 +61,15 @@ class Subscription extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal");
+    }
+
+    public function scopeWithCategories(Builder $query): Builder
+    {
+        return $query->whereHas("graph_categories");
+    }
+
+    public function scopeWithoutCategories(Builder $query): Builder
+    {
+        return $query->whereDoesntHave("graph_categories");
     }
 }

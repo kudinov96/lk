@@ -12,12 +12,17 @@ class ProfileController extends Controller
 {
     public function profile(): Response
     {
-        $user              = auth()->user();
-        $subscription_icon = $user->subscriptions()->first()->icon ?? "";
+        $user             = auth()->user();
+        $subscriptionIcon = $user->subscriptions()->first()->icon ?? "";
+
+        $subscriptionsWithoutCategories = $user->subscriptions()->withoutCategories()->get();
+        $subscriptionsWithCategories    = $user->subscriptions()->withCategories()->get();
 
         return response()->view("app.user.profile", compact(
             "user",
-            "subscription_icon",
+            "subscriptionIcon",
+            "subscriptionsWithoutCategories",
+            "subscriptionsWithCategories",
         ));
     }
 
@@ -28,23 +33,34 @@ class ProfileController extends Controller
         return redirect()->route("home");
     }
 
+    public function subscriptionsWithoutCategories(): Response
+    {
+        $user          = auth()->user();
+        $subscriptions = Subscription::withoutCategories()->get();
+
+        return response()->view("app.user.subscriptions-without-categories", compact(
+            "user",
+            "subscriptions",
+        ));
+    }
+
+    public function subscriptionsWithCategories(): Response
+    {
+        $user          = auth()->user();
+        $subscriptions = Subscription::withCategories()->get();
+
+        return response()->view("app.user.subscriptions-with-categories", compact(
+            "user",
+            "subscriptions",
+        ));
+    }
+
     public function graphs(): Response
     {
         $user = auth()->user();
 
         return response()->view("app.user.graphs", compact(
             "user",
-        ));
-    }
-
-    public function subscriptions(): Response
-    {
-        $user          = auth()->user();
-        $subscriptions = Subscription::latest()->get();
-
-        return response()->view("app.user.subscriptions", compact(
-            "user",
-            "subscriptions",
         ));
     }
 }

@@ -4,8 +4,8 @@
     <div class="page-line">
         <div class="block-name1">
             <div class="block-name1__foto" style="background-image: url({{ filter_var($user->avatar, FILTER_VALIDATE_URL) ? $user->avatar : Voyager::image($user->avatar) }});">
-                @if($subscription_icon)
-                    <i class="pro" style="background: url({{ Voyager::image( $subscription_icon ) }}) no-repeat 0 0; background-size: 46px 54px;"></i>
+                @if($subscriptionIcon)
+                    <i class="pro" style="background: url({{ Voyager::image( $subscriptionIcon ) }}) no-repeat 0 0; background-size: 46px 54px;"></i>
                 @endif
             </div>
             <div class="block-name1__text">
@@ -21,40 +21,39 @@
         <div class="block-lk1 style1">
             <div class="block-lk1__title-top">Ваши подписки</div>
             <table class="table-subscribe1">
-				@php
-					$has_subscripes=false;
-				@endphp
-				@section("subscripes")
-					@foreach($user->subscriptions as $key => $subscription)
-						@if($subscription->graph_categories->count() < 1)
-						@php
-							$has_subscripes=true;
-						@endphp
-						<tr class="item">
-							<td>
-								<div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
-							</td>
-							<td>
-								<a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
-							<td>
-								<div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
-							</td>
-							<td>
-								<a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
-								<div class="subscription-buy__block hidden">
-									<x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
-								</div>
-							</td>
-							<div class="hidden">
-								<div id="modal-subscription-{{ $key }}">
-									<h2>{{ $subscription->title }}</h2>
-									{!! $subscription->content !!}
-								</div>
-							</div>
-						</tr>
-						@endif
-					@endforeach
-					{{--<tr>
+                @if($subscriptionsWithoutCategories->isNotEmpty())
+                    @foreach($subscriptionsWithoutCategories as $key => $subscription)
+                        <tr class="item">
+                            <td>
+                                <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                            </td>
+                            <td>
+                                <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
+                            <td>
+                                <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
+                            </td>
+                            <td>
+                                <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                                <div class="subscription-buy__block hidden">
+                                    <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                </div>
+                            </td>
+                            <div class="hidden">
+                                <div id="modal-subscription-{{ $key }}">
+                                    <h2>{{ $subscription->title }}</h2>
+                                    {!! $subscription->content !!}
+                                </div>
+                            </div>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr class="item">
+                        <td>
+                            <p>У вас нет купленных подписок</p>
+                        </td>
+                    </tr>
+                @endif
+                {{--<tr>
 						<td class="no-padding-mobile">
 							<div class="table-subscribe1__title2">
 								<span>персональное предложение со скидкой!</span>
@@ -79,49 +78,37 @@
 							</div>
 						</td>
 					</tr>--}}
-				@stop
-
-				@if($has_subscripes)
-					@yield("subscripes")
-				@else
-					<tr class="item">
-						<td>
-							<p>У вас нет купленных подписок</p>
-						</td>
-					</tr>
-				@endif
             </table>
-            <a href="{{ route("user.subscriptions") }}" class="block-lk1__link-bottom">Все варианты подписок</a>
+            <a href="{{ route("user.subscriptions-without-categories") }}" class="block-lk1__link-bottom">Все варианты подписок</a>
         </div>
         <div class="block-lk1 style2">
             <div class="block-lk1__title-top">Графики с аналитикой</div>
             <table class="table-subscribe1">
-                @php
-					$has_subscripes=false;
-				@endphp
-				@section("subscripes_graph")
-				@foreach($user->subscriptions as $key => $subscription)
-                   @if($subscription->graph_categories->count() > 0)
-					@php
-						$has_subscripes=true;
-					@endphp
-					<tr class="item">
-						<td>
-							<div class="table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
-						</td>
-						<td><a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
-						<td>
-							<div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}</div>
-						</td>
-						<td>
-							<a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
-							<div class="subscription-buy__block hidden">
-								<x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
-							</div>
-						</td>
-					</tr>
-					@endif
-                @endforeach
+                @if($subscriptionsWithCategories->isNotEmpty())
+                    @foreach($subscriptionsWithCategories as $key => $subscription)
+                        <tr class="item">
+                            <td>
+                                <div class="table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                            </td>
+                            <td><a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
+                            <td>
+                                <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}</div>
+                            </td>
+                            <td>
+                                <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                                <div class="subscription-buy__block hidden">
+                                    <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr class="item">
+                        <td>
+                            <p>У вас нет купленных графиков</p>
+                        </td>
+                    </tr>
+                @endif
                 {{--<tr>
                     <td class="no-padding-mobile">
                         <div class="table-subscribe1__title3">Графики акций (неоплачено)</div>
@@ -144,18 +131,8 @@
                         </div>
                     </td>
                 </tr>--}}
-				@stop
-				@if($has_subscripes)
-					@yield("subscripes_graph")
-				@else
-					<tr class="item">
-						<td>
-							<p>У вас нет купленных графиков</p>
-						</td>
-					</tr>
-				@endif
             </table>
-            <a href="{{ route("user.subscriptions") }}" class="block-lk1__link-bottom">Все варианты подписок на графики</a>
+            <a href="{{ route("user.subscriptions-with-categories") }}" class="block-lk1__link-bottom">Все варианты подписок на графики</a>
         </div>
 		@if(setting('site.has_courses'))
         <div class="block-lk1 style3">
