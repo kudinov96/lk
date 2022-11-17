@@ -40,6 +40,8 @@ Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
     Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
     Route::get("subscriptions/with-categories", [ProfileController::class, "subscriptionsWithCategories"])->name("user.subscriptions-with-categories");
     Route::get("subscriptions/without-categories", [ProfileController::class, "subscriptionsWithoutCategories"])->name("user.subscriptions-without-categories");
+
+    Route::put("user/{id}", [ProfileController::class, "update"])->name("user.update");
 });
 
 Route::group(["prefix" => "payment", "middleware" => "auth"], function(){

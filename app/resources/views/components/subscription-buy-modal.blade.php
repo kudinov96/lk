@@ -1,5 +1,5 @@
 <div class="hidden">
-    <div class="modal-payment" id="modal-subscription-payment">
+    <div class="modal-default" id="modal-subscription-payment">
         <h2>Оплатить услугу</h2>
         <p class="modal-order-title"></p>
 

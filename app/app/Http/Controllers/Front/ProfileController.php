@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Actions\User\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,5 +65,17 @@ class ProfileController extends Controller
         return response()->view("app.user.graphs", compact(
             "user",
         ));
+    }
+
+    public function update(Request $request, int $id, UpdateUser $updateUser): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        $updateUser->handle($user, [
+            "name"          => $request->input("name") ?? null,
+            "telegram_name" => $request->input("telegram_name") ?? null,
+        ]);
+
+        return redirect()->route("user.profile");
     }
 }
