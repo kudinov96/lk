@@ -3,21 +3,37 @@
         <div class="block-lk1__button-select">
             <div class="select-price1">
                 @php
-                    $firstPeriod        = $subscription->periods()->first();
-                    $priceAfterDiscount = $firstPeriod->priceAfterDiscount($subscription->id);
+                    $firstPeriod            = $subscription->periods()->first();
+                    $priceAfterDiscount     = $firstPeriod->priceAfterDiscount($subscription->id);
+                    $fullPaymentDescription = $firstPeriod->full_count_name_human . " — <span class='discount-price'>" . $firstPeriod->pivot->price . "</span> → " . $firstPeriod->fullDescription($subscription->id);
                 @endphp
                 @if ($priceAfterDiscount["discount"])
-                    <div class="item__current-period select-price1__current" data-period-id="{{ $firstPeriod->id }}"><div>{{ $firstPeriod->full_count_name_human }} — <span>{{ $firstPeriod->pivot->price }}</span> → {{ $priceAfterDiscount["price"] }} руб. (скидка {{ $priceAfterDiscount["discount"] }}%)</div></div>
+                    <div class="item__current-period select-price1__current" data-period-id="{{ $firstPeriod->id }}">
+                        <div>
+                            {!! $fullPaymentDescription !!}
+                        </div>
+                    </div>
                 @else
-                    <div class="item__current-period select-price1__current" data-period-id="{{ $firstPeriod->id }}"><div>{{ $firstPeriod->full_count_name_human }} — {{ $firstPeriod->pivot->price }} руб.</div></div>
+                    <div class="item__current-period select-price1__current" data-period-id="{{ $firstPeriod->id }}">
+                        <div>
+                            {{ $firstPeriod->full_count_name_human }} — {{ $firstPeriod->pivot->price }} руб.
+                        </div>
+                    </div>
                 @endif
                 <div class="select-price1__drop">
                     @foreach($subscription->periods as $period)
-                        @php $priceAfterDiscount = $period->priceAfterDiscount($subscription->id); @endphp
+                        @php
+                            $priceAfterDiscount = $period->priceAfterDiscount($subscription->id);
+                            $fullPaymentDescription = $period->full_count_name_human . " — <span class='discount-price'>" . $period->pivot->price . "</span> → " . $period->fullDescription($subscription->id);
+                        @endphp
                         @if ($priceAfterDiscount["discount"])
-                            <div class="select-price1__drop-item" data-period-id="{{ $period->id }}">{{ $period->full_count_name_human }} — <span>{{ $period->pivot->price }}</span> → {{ $priceAfterDiscount["price"] }} руб. (скидка {{ $priceAfterDiscount["discount"] }}%)</div>
+                            <div class="select-price1__drop-item" data-period-id="{{ $period->id }}">
+                                {!! $fullPaymentDescription !!}
+                            </div>
                         @else
-                            <div class="select-price1__drop-item" data-period-id="{{ $period->id }}">{{ $period->full_count_name_human }} — {{ $period->pivot->price }} руб.</div>
+                            <div class="select-price1__drop-item" data-period-id="{{ $period->id }}">
+                                {{ $period->full_count_name_human }} — {{ $period->pivot->price }} руб.
+                            </div>
                         @endif
                     @endforeach
                 </div>

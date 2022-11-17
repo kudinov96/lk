@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Actions\Order\CreateOrder;
+use App\Actions\User\UpdateUser;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Subscription;
@@ -12,12 +13,18 @@ use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoff)
+    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoff, UpdateUser $updateUser)
     {
         $user         = auth()->user();
         $subscription = Subscription::findOrFail($request->input("subscription_id"));
         $period       = $subscription->periods()->where("id", $request->input("period_id"))->first();
         $amount       = $period->priceAfterDiscount($subscription->id);
+
+        $updateUser->handle($user, [
+            "fio"   => $request->input("name"),
+            "email" => $request->input("email"),
+            "phone" => $request->input("phone"),
+        ]);
 
         $order = $createOrder->handle([
             "description"     => $request->input("description"),

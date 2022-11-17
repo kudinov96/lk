@@ -179,6 +179,11 @@
     }
 }
 
+.user-page-update__item-block{
+    display: flex;
+    align-items: center;
+}
+
 .user-page-update__item-title{
     font-size: 16px;
     margin-right: auto;
@@ -188,6 +193,8 @@
 }
 
 .user-page__subscriptions-auto{
+    margin-left: auto;
+    margin-right: 10px;
     span{
         margin-right: 5px;
     }
@@ -202,9 +209,15 @@
 .user-page-update__subscriptions{
     .select2{
         display: none;
-        margin-left: auto;
-        margin-right: 15px;
+        margin-right: 10px;
         width: 140px !important;
+    }
+}
+
+.user-page__subscriptions-bill{
+    display: none;
+    span{
+        margin-right: 5px;
     }
 }
 

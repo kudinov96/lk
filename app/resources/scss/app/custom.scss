@@ -34,3 +34,12 @@
 .table-subscribe1__days-left{
     padding-right: 30px;
 }
+
+.select-price1__current, .select-price1__drop-item{
+    span{
+        text-decoration: none;
+    }
+    .discount-price{
+        text-decoration: line-through;
+    }
+}
