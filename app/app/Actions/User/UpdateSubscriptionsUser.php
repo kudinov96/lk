@@ -67,14 +67,14 @@ class UpdateSubscriptionsUser
                         "Taxation"      => "usn_income",
                     ];
 
-                    $items[] = [
-                        "Name"     => $subscriptionModel->title,
-                        "Price"    => $order->amount,
-                        "NDS"      => "vat20",
-                        "Quantity" => 1,
-                    ];
-
-                    $payment_url = $tinkoff->paymentURL($payment, $items);
+                    $payment_url = $tinkoff->paymentURL($payment, [
+                        [
+                            "Name"     => $subscriptionModel->title,
+                            "Price"    => $order->amount,
+                            "NDS"      => "vat20",
+                            "Quantity" => 1,
+                        ]
+                    ]);
 
                     if($payment_url) {
                         $text = "Ссылка на оплату услуги: <a href='" . $payment_url . "'>$order->description</a>";
