@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\TelegramMessage\CreateTelegramMessage;
+use App\Actions\User\UpdateUser;
 use App\Enums\TelegramMessageFrom;
 use App\Models\User;
 use App\Services\TelegramBotService;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BotController extends Controller
@@ -68,7 +70,10 @@ class BotController extends Controller
                 "password"      => Hash::make(Str::random(20)),
                 "telegram_id"   => $user_telegram_id,
                 "telegram_name" => $user_telegram_name,
+                "avatar"        => $avatar_path ?? null,
             ]);
+
+            $this->storeAvatar($user, $telegramBotService);
 
             Auth::login($user);
             Session::setId($session_id);
@@ -77,7 +82,6 @@ class BotController extends Controller
         $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>";
 
         if ($telegramBotService->sendMessage(
-            api_token: config("bot.bot_api_token"),
             chat_id: $chat_id,
             text: $text,
         )) {
@@ -98,5 +102,25 @@ class BotController extends Controller
             "created_at" => $request->input("message.date"),
             "updated_at" => $request->input("message.date"),
         ]);
+    }
+
+    private function storeAvatar(User $user, TelegramBotService $telegramBotService)
+    {
+        $photos = $telegramBotService->getUserProfilePhotos(
+            user_id: $user->telegram_id,
+        );
+
+        if (!empty($photos["result"]["photos"])) {
+            $photo = $telegramBotService->getFile(
+                file_id: $photos["result"]["photos"][0][0]["file_id"],
+            );
+
+            $photo_path  = $telegramBotService->generateFilePath($photo["result"]["file_path"]);
+            $avatar_path = "users/user-profile-photo-" . $user->id . ".jpg";
+            Storage::disk(config("voyager.storage.disk"))->put($avatar_path, file_get_contents($photo_path));
+
+            $updateUser = new UpdateUser();
+            $updateUser->handle($user, ["avatar" => $avatar_path]);
+        }
     }
 }

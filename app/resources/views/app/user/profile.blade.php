@@ -80,7 +80,7 @@
 						</td>
 					</tr>--}}
 				@stop
-				
+
 				@if($has_subscripes)
 					@yield("subscripes")
 				@else

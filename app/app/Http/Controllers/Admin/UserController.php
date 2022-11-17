@@ -258,7 +258,6 @@ class UserController extends VoyagerUserController
         $user    = User::findOrFail($request->input("user_id"));
 
         if (!$telegramBotService->sendMessage(
-            api_token: config("bot.bot_api_token"),
             chat_id: $user->telegram_id ?? 0,
             text: $message,
         )) {

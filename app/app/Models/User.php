@@ -21,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool   $is_ban
  * @property string $fio
  * @property string $phone
+ * @property string $avatar
  */
 class User extends \TCG\Voyager\Models\User
 {

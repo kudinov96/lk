@@ -15,6 +15,7 @@ class UpdateUser
         $item->is_ban        = $data["is_ban"] ?? $item->is_ban;
         $item->fio           = $data["fio"] ?? $item->fio;
         $item->phone         = $data["phone"] ?? $item->phone;
+        $item->avatar        = $data["avatar"] ?? $item->avatar;
 
         $item->save();
 
