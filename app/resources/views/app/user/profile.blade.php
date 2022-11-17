@@ -1,5 +1,8 @@
 @extends("app.layout")
 
+@section("title", setting("site.profile_title"))
+@section("description", setting("site.profile_description"))
+
 @section("content")
     <div class="page-line">
         <div class="block-name1">

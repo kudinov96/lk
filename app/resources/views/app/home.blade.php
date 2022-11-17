@@ -1,10 +1,12 @@
 @extends("app.layout")
-@section('title', 'Вход в кабинет')
+
+@section("title", setting("site.title"))
+@section("description", setting("site.description"))
 
 @section("content")
 <div class="page-line">
 	<h1>Авторизация</h1>
-   
+
 	<br>
 	<div class="block-lk1">
 		<a target="_blank" href="https://t.me/{{ $botName }}?start=auth{{ $sessionId }}" class="block-lk1__link-bottom">
@@ -13,7 +15,6 @@
 	</div>
 	<br>
 	<br>
-
 </div>
 @stop
 

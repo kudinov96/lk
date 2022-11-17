@@ -81,16 +81,13 @@ class BotController extends Controller
             Session::setId($session_id);
         }
 
-        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>.
-Для повторной авторизации снова нажмите кнопку \"Запустить\".";
-
         if ($telegramBotService->sendMessage(
             chat_id: $chat_id,
-            text: $text,
+            text: setting("site.bot_hello"),
         )) {
             $createTelegramMessage->handle([
                 "user_id" => $user->id,
-                "text"    => $text,
+                "text"    => setting("site.bot_hello"),
                 "from"    => TelegramMessageFrom::BOT->value,
             ]);
         }

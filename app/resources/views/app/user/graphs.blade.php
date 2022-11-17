@@ -1,5 +1,8 @@
 @extends("app.layout")
 
+@section("title", setting("site.graphs_title"))
+@section("description", setting("site.graphs_description"))
+
 @section("content")
     <div class="page-line">
         @php

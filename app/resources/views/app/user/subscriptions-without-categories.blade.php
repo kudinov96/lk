@@ -1,5 +1,8 @@
 @extends("app.layout")
 
+@section("title", setting("site.subscriptions_title"))
+@section("description", setting("site.subscriptions_description"))
+
 @section("content")
     <div class="page-line">
         <div class="block-lk1 style1">
