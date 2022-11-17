@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\TelegramMessageFrom;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $telegram_name
  * @property int    $telegram_id
  * @property bool   $is_ban
+ * @property string $fio
+ * @property string $phone
  */
 class User extends \TCG\Voyager\Models\User
 {
@@ -35,6 +38,8 @@ class User extends \TCG\Voyager\Models\User
         'telegram_id',
         'telegram_name',
         'is_ban',
+        'fio',
+        'phone',
     ];
 
     /**
@@ -93,6 +98,11 @@ class User extends \TCG\Voyager\Models\User
 
     public function hasNotReadTelegramMessages(): bool
     {
-        return $this->telegram_messages()->where("is_read", false)->exists();
+        return $this->telegram_messages()
+            ->where([
+                ["is_read", false],
+                ["from", TelegramMessageFrom::USER->value],
+            ])
+            ->exists();
     }
 }

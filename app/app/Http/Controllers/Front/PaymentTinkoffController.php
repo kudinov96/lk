@@ -11,11 +11,14 @@ use App\Models\Order;
 use App\Models\Period;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class PaymentTinkoffController extends Controller
 {
     public function callback(Request $request): void
     {
+        Log::channel("payments")->info("CALLBACK: " . print_r($request->all(), true));
+
         if ($request->Status === OrderStatus::CONFIRMED->value) {
             $this->statusConfirmed($request);
         }
@@ -23,6 +26,8 @@ class PaymentTinkoffController extends Controller
 
     public function success(Request $request): Response
     {
+        Log::channel("payments")->info("SUCCESS: " . print_r($request->all(), true));
+
         $this->statusConfirmed($request);
 
         return response()->view("app.user.payment.success");
@@ -30,6 +35,8 @@ class PaymentTinkoffController extends Controller
 
     public function fail(Request $request, UpdateOrder $updateOrder): Response
     {
+        Log::channel("payments")->info("FAIL: " . print_r($request->all(), true));
+
         $order = Order::findOrFail($request->OrderId);
 
         $updateOrder->handel($order, [
