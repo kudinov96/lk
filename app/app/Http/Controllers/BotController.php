@@ -10,7 +10,6 @@ use App\Services\TelegramBotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -31,11 +30,11 @@ class BotController extends Controller
 
     public function webhook(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage)
     {
-        $message          = $request->input("message.text");
-        $chat_id          = $request->input("message.chat.id");
-        $user_telegram_id = $request->input("message.from.id");
-
-        $user             = User::query()->where("telegram_id", $user_telegram_id)->first();
+        $message            = $request->input("message.text");
+        $chat_id            = $request->input("message.chat.id");
+        $user_telegram_id   = $request->input("message.from.id");
+        $user_telegram_name = $request->input("message.from.username");
+        $user               = User::query()->where("telegram_name", $user_telegram_name)->first();
 
         if ($chat_id !== $user_telegram_id)  {
             return;
@@ -85,7 +84,8 @@ class BotController extends Controller
             Session::setId($session_id);
         }
 
-        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>";
+        $text = "Вы успешно авторизованы, ждем Вас в <a href=\"" . route("user.profile") . "\">личном кабинете</a>.
+Для повторной авторизации снова нажмите кнопку \"Запустить\".";
 
         if ($telegramBotService->sendMessage(
             chat_id: $chat_id,
