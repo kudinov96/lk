@@ -88,7 +88,7 @@
                     @foreach($subscriptionsWithCategories as $key => $subscription)
                         <tr class="item">
                             <td>
-                                <div class="table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                                <a href="{{ route("user.graphs") }}" class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></a>
                             </td>
                             <td><a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
                             <td>
