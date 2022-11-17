@@ -18,23 +18,20 @@ class BotController extends Controller
 {
     public function setWebhook(TelegramBotService $telegramBotService): array
     {
-        $webhook_url = route("bot.webhook");
-
-        return $telegramBotService->setWebhook(config("bot.bot_api_token"), $webhook_url);
+        return $telegramBotService->setWebhook(route("bot.webhook"));
     }
 
     public function getWebhookInfo(TelegramBotService $telegramBotService): array
     {
-        return $telegramBotService->getWebhookInfo(config("bot.bot_api_token"));
+        return $telegramBotService->getWebhookInfo();
     }
 
     public function webhook(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage)
     {
-        $message            = $request->input("message.text");
-        $chat_id            = $request->input("message.chat.id");
-        $user_telegram_id   = $request->input("message.from.id");
-        $user_telegram_name = $request->input("message.from.username");
-        $user               = User::query()->where("telegram_name", $user_telegram_name)->first();
+        $message          = $request->input("message.text");
+        $chat_id          = $request->input("message.chat.id");
+        $user_telegram_id = $request->input("message.from.id");
+        $user             = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($chat_id !== $user_telegram_id)  {
             return;
@@ -57,7 +54,7 @@ class BotController extends Controller
         $user_firstname     = $request->input("message.from.first_name") ?? "";
         $user_lastname      = $request->input("message.from.last_name") ?? "";
 
-        $user               = User::query()->where("telegram_name", $user_telegram_name)->first();
+        $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
 
         if ($user) {
             if (!$user->telegram_id) {
