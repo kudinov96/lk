@@ -10,6 +10,7 @@ use App\Services\TelegramBotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -57,9 +58,14 @@ class BotController extends Controller
         $user_firstname     = $request->input("message.from.first_name") ?? "";
         $user_lastname      = $request->input("message.from.last_name") ?? "";
 
-        $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
+        $user               = User::query()->where("telegram_name", $user_telegram_name)->first();
 
         if ($user) {
+            if (!$user->telegram_id) {
+                $updateUser = new UpdateUser();
+                $updateUser->handle($user, ["telegram_id" => $user_telegram_id]);
+            }
+
             Auth::login($user);
             Session::setId($session_id);
             $user->sessions()->where("id", "!=", $session_id)->delete();
