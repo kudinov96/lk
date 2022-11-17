@@ -17,8 +17,8 @@ class UpdateSubscriptionsUser
     public function handle(User $item, array $subscriptions): User
     {
         $createOrder           = new CreateOrder();
-        $telegramBotService    = new TelegramBotService();
         $createTelegramMessage = new CreateTelegramMessage();
+        $telegramBotService    = app(TelegramBotService::class);
         $tinkoff               = app(TinkoffPaymentService::class);
 
         foreach ($subscriptions as $subscription) {
@@ -80,7 +80,6 @@ class UpdateSubscriptionsUser
                         $text = "Ссылка на оплату услуги: <a href='" . $payment_url . "'>$order->description</a>";
 
                         if ($telegramBotService->sendMessage(
-                            api_token: config("bot.bot_api_token"),
                             chat_id: $item->telegram_id,
                             text: $text,
                         )) {
