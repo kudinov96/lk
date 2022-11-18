@@ -1,12 +1,12 @@
 {
+  "resources/scss/admin/admin.scss": {
+    "file": "assets/admin.557100af.css",
+    "src": "resources/scss/admin/admin.scss",
+    "isEntry": true
+  },
   "resources/scss/app/custom.scss": {
     "file": "assets/custom.94de0e0d.css",
     "src": "resources/scss/app/custom.scss",
-    "isEntry": true
-  },
-  "resources/scss/admin/admin.scss": {
-    "file": "assets/admin.486a0c28.css",
-    "src": "resources/scss/admin/admin.scss",
     "isEntry": true
   }
 }

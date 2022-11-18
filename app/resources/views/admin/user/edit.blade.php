@@ -80,7 +80,12 @@
                                                     <div class="user-page-update__subscription-item" data-number="{{ $key }}" data-subscription-id="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][id]" value="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][updated]" value="0">
-                                                        <div class="user-page-update__item-title"><a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" target="_blank">{{ $subscription->title }}</a> до <span>{{ $subscription->date_end }}</span></div>
+                                                        <div class="user-page-update__item-title user-page-update__subscription-item-title">
+                                                            <a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" target="_blank">{{ $subscription->title }} до </a>
+                                                            <input type="date" class="form-control new-date-subscription" name="update_subscriptions[{{ $key }}][new_date_end]"
+                                                                   placeholder=""
+                                                                   value="{{ \Carbon\Carbon::parse($subscription->date_end)->format('Y-m-d') }}">
+                                                        </div>
                                                         <div class="user-page-update__item-block">
                                                             <select name="update_subscriptions[{{ $key }}][period]" class="select2 extend-subscription-select">
                                                                 <option value="">Выберите период</option>
@@ -519,6 +524,13 @@
                 $(this).remove();
                 $item.find('.select2').show();
                 $item.find('.user-page__subscriptions-bill').show();
+                $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
+            });
+
+            $(document).on("change", ".new-date-subscription", function() {
+                let $item  = $(this).closest(".user-page-update__subscription-item");
+                let number = $item.data("number");
+
                 $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
             });
 

@@ -23,11 +23,20 @@ class UpdateSubscriptionsUser
 
         foreach ($subscriptions as $subscription) {
             $subscriptionModel = $item->subscriptions()->where("id", $subscription["id"])->first();
+            $new_data_end      = Carbon::make($subscription["new_date_end"]);
             $updated           = $subscription["updated"] === "1" ? true : false;
             $is_auto_renewal   = isset($subscription["is_auto_renewal"]) ? true : false;
             $bill              = isset($subscription["bill"]) ? true : false;
 
             if (!$updated) continue;
+
+            if ($subscriptionModel->date_end !== $new_data_end->format("d.m.Y")) {
+                $item->subscriptions()->updateExistingPivot($subscription["id"], [
+                    "date_end" => $new_data_end,
+                ]);
+
+                continue;
+            }
 
             $updateFields = [];
             if ($subscription["period"]) {

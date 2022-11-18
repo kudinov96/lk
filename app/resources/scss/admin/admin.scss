@@ -273,3 +273,12 @@
 .error{
     color: red;
 }
+
+.user-page-update__subscription-item-title{
+    display: flex;
+    align-items: center;
+    a{
+        flex: none;
+        margin-right: 15px;
+    }
+}
