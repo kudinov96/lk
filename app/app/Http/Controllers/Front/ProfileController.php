@@ -60,10 +60,12 @@ class ProfileController extends Controller
 
     public function graphs(): Response
     {
-        $user = auth()->user();
+        $user          = auth()->user();
+        $subscriptions = $user->subscriptions()->withCategories();
 
         return response()->view("app.user.graphs", compact(
             "user",
+            "subscriptions",
         ));
     }
 

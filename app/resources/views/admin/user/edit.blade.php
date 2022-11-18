@@ -477,7 +477,7 @@
             });
 
             $(document).on("click", ".remove_update_subscription", function() {
-                let $item           = $(this).closest(".user-page-update__item");
+                let $item           = $(this).closest(".user-page-update__subscription-item");
                 let number          = $item.data("number");
                 let subscription_id = $item.data("subscription-id");
 

@@ -28,10 +28,14 @@ class BotController extends Controller
 
     public function webhook(Request $request, TelegramBotService $telegramBotService, CreateTelegramMessage $createTelegramMessage)
     {
-        $message          = $request->input("message.text");
-        $chat_id          = $request->input("message.chat.id");
-        $user_telegram_id = $request->input("message.from.id");
-        $user             = User::query()->where("telegram_id", $user_telegram_id)->first();
+        $message            = $request->input("message.text");
+        $chat_id            = $request->input("message.chat.id");
+        $user_telegram_id   = $request->input("message.from.id");
+        $user_telegram_name = $request->input("message.from.username");
+        $user               = User::query()
+            ->where("telegram_id", $user_telegram_id)
+            ->orWhere("telegram_name", $user_telegram_name)
+            ->first();
 
         if ($chat_id !== $user_telegram_id)  {
             return;
@@ -54,12 +58,20 @@ class BotController extends Controller
         $user_firstname     = $request->input("message.from.first_name") ?? "";
         $user_lastname      = $request->input("message.from.last_name") ?? "";
 
-        $user               = User::query()->where("telegram_id", $user_telegram_id)->first();
+        $user               = User::query()
+            ->where("telegram_id", $user_telegram_id)
+            ->orWhere("telegram_name", $user_telegram_name)
+            ->first();
 
         if ($user) {
             if (!$user->telegram_id) {
                 $updateUser = new UpdateUser();
                 $updateUser->handle($user, ["telegram_id" => $user_telegram_id]);
+            }
+
+            if (!$user->telegram_name) {
+                $updateUser = new UpdateUser();
+                $updateUser->handle($user, ["telegram_name" => $user_telegram_name]);
             }
 
             Auth::login($user);
