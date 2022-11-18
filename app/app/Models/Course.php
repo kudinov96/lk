@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\Order;
+use App\Models\Traits\PriceAfterPersonalDiscount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use Order;
+    use PriceAfterPersonalDiscount;
 
     protected $table = "course";
 

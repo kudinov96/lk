@@ -236,7 +236,7 @@
                         </td>
                     </tr>--}}
                 </table>
-                <a href="" class="block-lk1__link-bottom">Все обучающие семинары</a>
+                <a href="{{ route("user.services") }}" class="block-lk1__link-bottom">Все обучающие семинары</a>
             </div>
 		@endif
     </div>

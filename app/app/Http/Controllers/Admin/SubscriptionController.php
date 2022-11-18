@@ -136,17 +136,4 @@ class SubscriptionController extends VoyagerBaseController
             "data" => $data,
         ];
     }
-
-    public function fullDescription(Request $request)
-    {
-        $subscription = Subscription::findOrFail($request->input("subscription_id"));
-        $period       = $subscription->periods()
-            ->where("id", $request->input("period_id"))
-            ->first();
-
-        return [
-            "success" => true,
-            "data" => $period->fullPaymentDescription($subscription->id),
-        ];
-    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\OrderController;
+use App\Http\Controllers\Front\PaymentController;
 use App\Http\Controllers\Front\PaymentTinkoffController;
 use App\Http\Controllers\Front\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,7 @@ Route::group(["prefix" => "profile", "middleware" => "auth"], function(){
     Route::get("graphs", [ProfileController::class, "graphs"])->name("user.graphs");
     Route::get("subscriptions/with-categories", [ProfileController::class, "subscriptionsWithCategories"])->name("user.subscriptions-with-categories");
     Route::get("subscriptions/without-categories", [ProfileController::class, "subscriptionsWithoutCategories"])->name("user.subscriptions-without-categories");
+    Route::get("services", [ProfileController::class, "services"])->name("user.services");
 
     Route::put("user/{id}", [ProfileController::class, "update"])->name("user.update");
 });
@@ -75,7 +77,7 @@ Route::group(["prefix" => "admin"], function () {
 
     Route::post("ajax/subscription/periods", [SubscriptionController::class, "periods"])->name("voyager.subscription.periods");
 
-    Route::post("ajax/subscription/full-description", [SubscriptionController::class, "fullDescription"])->name("voyager.subscription.period.full-description");
+    Route::post("ajax/payment/full-description", [PaymentController::class, "fullDescription"])->name("voyager.payment.full-description");
 
     Route::put("ajax/graphs/order", [GraphsController::class, "orderGraphs"])->name("voyager.graph.order");
     Route::delete("ajax/graphs", [GraphsController::class, "deleteGraphs"])->name("voyager.graph.delete");

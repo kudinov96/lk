@@ -9,8 +9,9 @@
             <input type="hidden" name="description">
             <input type="hidden" name="frame" value="false">
             <input type="hidden" name="language" value="ru">
-            <input type="hidden" name="subscription_id" required>
-            <input type="hidden" name="period_id" required>
+            <input type="hidden" name="service_id">
+            <input type="hidden" name="service_type">
+            <input type="hidden" name="period_id">
 
             <label>
                 <input type="text" placeholder="ФИО плательщика" name="name" required>
