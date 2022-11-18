@@ -11,7 +11,7 @@ class HomeController extends Controller
     public function index(): Response | RedirectResponse
     {
         if (auth()->user()) {
-            return response()->redirectToRoute("user.profile");
+            return response()->redirectToRoute("user.graphs");
         }
 
         return response()->view("app.home", [
