@@ -1,7 +1,7 @@
 <script>
     $(document).ready(function () {
 
-        let $form = $("#modal-subscription-payment");
+        let $form = $("#modal-service-payment");
 
         $(document).on("click", ".select-price1__drop-item", function(){
             let $item     = $(this).closest(".item");
@@ -12,16 +12,18 @@
 
         $(document).on("click", ".item__buy", function(){
             let $item             = $(this).closest(".item");
-            let subscription_id   = $(this).data("subscription-id");
+            let service_id        = $(this).data("service-id");
+            let service_type      = $(this).data("service-type");
             let period_id         = $item.find(".item__current-period").data("period-id");
             let order_title       = "";
 
             $.ajax({
-                url: "{{ route("voyager.subscription.period.full-description") }}",
+                url: "{{ route("voyager.payment.full-description") }}",
                 type: "POST",
                 data: {
                     _token: "{{ csrf_token() }}",
-                    subscription_id,
+                    service_id,
+                    service_type,
                     period_id,
                 },
                 success: function(response) {
@@ -30,11 +32,12 @@
 
                         $form.find(".modal-order-title").html(order_title);
                         $form.find('input[name="description"]').val(order_title);
-                        $form.find('input[name="subscription_id"]').val(subscription_id);
+                        $form.find('input[name="service_id"]').val(service_id);
+                        $form.find('input[name="service_type"]').val(service_type);
                         $form.find('input[name="period_id"]').val(period_id);
 
                         /*$.fancybox({
-                            href: '#modal-subscription-payment',
+                            href: '#modal-service-payment',
                             modal: true
                         });*/
                     }
@@ -42,7 +45,7 @@
             });
         });
 
-        $("#subscription-payment").on("submit", function(e) {
+        $("#service-payment").on("submit", function(e) {
             e.preventDefault();
 
             let formData = new FormData($(this)[0]);

@@ -39,6 +39,6 @@
                 </div>
             </div>
         </div>
-        <a href="#" data-fancybox data-src="#modal-subscription-payment" data-subscription-id="{{ $subscription->id }}" class="item__buy block-lk1__button-buy">@if($user->subscriptions()->where("id", $subscription->id)->exists())ПРОДЛИТЬ ПОДПИСКУ@elseКУПИТЬ ПОДПИСКУ@endif</a>
+        <a href="#" data-fancybox data-src="#modal-service-payment" data-service-id="{{ $subscription->id }}" data-service-type="{{ \App\Models\Subscription::class }}" class="item__buy block-lk1__button-buy">@if($user->subscriptions()->where("id", $subscription->id)->exists())ПРОДЛИТЬ ПОДПИСКУ@elseКУПИТЬ ПОДПИСКУ@endif</a>
     </div>
 @endif

@@ -30,9 +30,9 @@
         </div>
     </div>
 
-    <x-subscription-buy-modal></x-subscription-buy-modal>
+    <x-service-buy-modal></x-service-buy-modal>
 @stop
 
 @section("javascript")
-    <x-subscription-buy-js></x-subscription-buy-js>
+    <x-service-buy-js></x-service-buy-js>
 @stop

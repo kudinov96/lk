@@ -18,7 +18,8 @@ use Illuminate\Support\Str;
  * @property string $phone
  * @property string $status
  * @property int    $user_id
- * @property int    $subscription_id
+ * @property int    $service_id
+ * @property int    $service_type
  * @property int    $period_id
  *
  * @property Carbon $created_at
@@ -36,7 +37,20 @@ class Order extends Model
 
     protected function subscription(): BelongsTo
     {
-        return $this->belongsTo(Subscription::class, "subscription_id");
+        return $this->belongsTo(Subscription::class, "service_id")
+            ->where("service_type", Subscription::class);
+    }
+
+    protected function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class, "service_id")
+            ->where("service_type", Course::class);
+    }
+
+    protected function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, "service_id")
+            ->where("service_type", Service::class);
     }
 
     public function scopeOnlyConfirmed(Builder $query): Builder

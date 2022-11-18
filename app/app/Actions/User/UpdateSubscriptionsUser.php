@@ -6,6 +6,7 @@ use App\Actions\Order\CreateOrder;
 use App\Actions\TelegramMessage\CreateTelegramMessage;
 use App\Enums\OrderStatus;
 use App\Enums\TelegramMessageFrom;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Services\Payment\TinkoffPaymentService;
 use App\Services\TelegramBotService;
@@ -61,7 +62,8 @@ class UpdateSubscriptionsUser
                         "phone"           => $item->phone,
                         "status"          => OrderStatus::NEW->value,
                         "user_id"         => $item->id,
-                        "subscription_id" => $subscriptionModel->id,
+                        "service_id"      => $subscriptionModel->id,
+                        "service_type"    => Subscription::class,
                         "period_id"       => $period->id,
                     ]);
 

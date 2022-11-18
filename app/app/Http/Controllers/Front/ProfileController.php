@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Front;
 
 use App\Actions\User\UpdateUser;
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -27,6 +29,18 @@ class ProfileController extends Controller
             "subscriptionsWithoutCategories",
             "subscriptionsWithCategories",
         ));
+    }
+
+    public function update(Request $request, int $id, UpdateUser $updateUser): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        $updateUser->handle($user, [
+            "name"          => $request->input("name") ?? null,
+            "telegram_name" => $request->input("telegram_name") ?? null,
+        ]);
+
+        return redirect()->route("user.profile");
     }
 
     public function logout(): RedirectResponse
@@ -69,15 +83,16 @@ class ProfileController extends Controller
         ));
     }
 
-    public function update(Request $request, int $id, UpdateUser $updateUser): RedirectResponse
+    public function services(): Response
     {
-        $user = User::findOrFail($id);
+        $user     = auth()->user();
+        $courses  = Course::latest()->get();
+        $services = Service::latest()->get();
 
-        $updateUser->handle($user, [
-            "name"          => $request->input("name") ?? null,
-            "telegram_name" => $request->input("telegram_name") ?? null,
-        ]);
-
-        return redirect()->route("user.profile");
+        return response()->view("app.user.services", compact(
+            "user",
+            "courses",
+            "services",
+        ));
     }
 }

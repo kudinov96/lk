@@ -16,9 +16,15 @@ class OrderController extends Controller
     public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoff, UpdateUser $updateUser)
     {
         $user         = auth()->user();
-        $subscription = Subscription::findOrFail($request->input("subscription_id"));
-        $period       = $subscription->periods()->where("id", $request->input("period_id"))->first();
-        $amount       = $period->priceAfterDiscount($subscription->id);
+        $service_type = $request->input("service_type");
+        $service      = app($service_type)::findOrFail($request->input("service_id"));
+
+        if ($service_type === Subscription::class) {
+            $period = $service->periods()->where("id", $request->input("period_id"))->first();
+            $amount = $period->priceAfterDiscount($service->id)["price"];
+        } else {
+            $amount = $service->price_discount;
+        }
 
         $updateUser->handle($user, [
             "fio"   => $request->input("name"),
@@ -28,13 +34,14 @@ class OrderController extends Controller
 
         $order = $createOrder->handle([
             "description"     => $request->input("description"),
-            "amount"          => $amount["price"],
+            "amount"          => $amount,
             "name"            => $request->input("name"),
             "email"           => $request->input("email"),
             "phone"           => $request->input("phone"),
             "status"          => OrderStatus::NEW->value,
             "user_id"         => $user->id,
-            "subscription_id" => $request->input("subscription_id"),
+            "service_id"      => $request->input("service_id"),
+            "service_type"    => $request->input("service_type"),
             "period_id"       => $request->input("period_id"),
         ]);
 
@@ -50,7 +57,7 @@ class OrderController extends Controller
         ];
 
         $items[] = [
-            "Name"     => $subscription->title,
+            "Name"     => $service->title,
             "Price"    => $order->amount,
             "NDS"      => "vat20",
             "Quantity" => 1,
