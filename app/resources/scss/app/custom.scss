@@ -43,3 +43,14 @@
         text-decoration: line-through;
     }
 }
+
+.block-name1__exit{
+    width: auto;
+    min-width: 203px;
+    padding: 0 15px;
+    &.non-icon{
+        &:before{
+            display: none;
+        }
+    }
+}

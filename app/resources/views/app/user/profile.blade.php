@@ -21,69 +21,71 @@
             </div>
             <a href="{{ route("user.logout") }}" class="block-name1__exit"><span>Выйти</span></a>
         </div>
-        <div class="block-lk1 style1">
-            <div class="block-lk1__title-top">Ваши подписки</div>
-            <table class="table-subscribe1">
-                @if($subscriptionsWithoutCategories->isNotEmpty())
-                    @foreach($subscriptionsWithoutCategories as $key => $subscription)
+        @if(setting("site.has_subsctiptions"))
+            <div class="block-lk1 style1">
+                <div class="block-lk1__title-top">Ваши подписки</div>
+                <table class="table-subscribe1">
+                    @if($subscriptionsWithoutCategories->isNotEmpty())
+                        @foreach($subscriptionsWithoutCategories as $key => $subscription)
+                            <tr class="item">
+                                <td>
+                                    <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                                </td>
+                                <td>
+                                    <a href="#" data-fancybox data-src="#modal-subscription-without-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
+                                <td>
+                                    <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
+                                </td>
+                                <td>
+                                    <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
+                                    <div class="subscription-buy__block hidden">
+                                        <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                    </div>
+                                </td>
+                                <div class="hidden">
+                                    <div id="modal-subscription-without-{{ $key }}">
+                                        <h2>{{ $subscription->title }}</h2>
+                                        {!! $subscription->content !!}
+                                    </div>
+                                </div>
+                            </tr>
+                        @endforeach
+                    @else
                         <tr class="item">
                             <td>
-                                <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
+                                <p>У вас нет купленных подписок</p>
                             </td>
-                            <td>
-                                <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
-                            <td>
-                                <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}<i></i></div>
-                            </td>
-                            <td>
-                                <a href="#" class="subscription-buy__open table-subscribe1__extend">ПРОДЛИТЬ ПОДПИСКУ</a>
-                                <div class="subscription-buy__block hidden">
-                                    <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
-                                </div>
-                            </td>
-                            <div class="hidden">
-                                <div id="modal-subscription-{{ $key }}">
-                                    <h2>{{ $subscription->title }}</h2>
-                                    {!! $subscription->content !!}
-                                </div>
-                            </div>
                         </tr>
-                    @endforeach
-                @else
-                    <tr class="item">
-                        <td>
-                            <p>У вас нет купленных подписок</p>
-                        </td>
-                    </tr>
-                @endif
-                {{--<tr>
-						<td class="no-padding-mobile">
-							<div class="table-subscribe1__title2">
-								<span>персональное предложение со скидкой!</span>
-								<p>подписка ULTRA VIP Luxury 3000</p>
-							</div>
-						</td>
-						<td><a href="" class="table-subscribe1__more">Подробнее</a></td>
-						<td colspan="2">
-							<div class="block-lk1__button">
-								<div class="block-lk1__button-select">
-									<div class="select-price1">
-										<div class="select-price1__current"><div><span>8 200 ₽</span> → 6 666 ₽ (скидка 20%)</div></div>
-										<div class="select-price1__drop">
-											<div class="select-price1__drop-item"><span>8 200 ₽</span> → 6 666 ₽ (скидка 20%)</div>
-											<div class="select-price1__drop-item"><span>12 200 ₽</span> → 10 666 ₽ (скидка 200%)</div>
-											<div class="select-price1__drop-item"><span>15 200 ₽</span> → 99 666 ₽ (скидка 2000%)</div>
-										</div>
-									</div>
-								</div>
-								<a href="" class="block-lk1__button-buy">КУПИТЬ ПОДПИСКУ</a>
-								<div class="block-lk1__button-close"></div>
-							</div>
-						</td>
-					</tr>--}}
-            </table>
-            <a href="{{ route("user.subscriptions-without-categories") }}" class="block-lk1__link-bottom">Все варианты подписок</a>
-        </div>
+                    @endif
+                    {{--<tr>
+                            <td class="no-padding-mobile">
+                                <div class="table-subscribe1__title2">
+                                    <span>персональное предложение со скидкой!</span>
+                                    <p>подписка ULTRA VIP Luxury 3000</p>
+                                </div>
+                            </td>
+                            <td><a href="" class="table-subscribe1__more">Подробнее</a></td>
+                            <td colspan="2">
+                                <div class="block-lk1__button">
+                                    <div class="block-lk1__button-select">
+                                        <div class="select-price1">
+                                            <div class="select-price1__current"><div><span>8 200 ₽</span> → 6 666 ₽ (скидка 20%)</div></div>
+                                            <div class="select-price1__drop">
+                                                <div class="select-price1__drop-item"><span>8 200 ₽</span> → 6 666 ₽ (скидка 20%)</div>
+                                                <div class="select-price1__drop-item"><span>12 200 ₽</span> → 10 666 ₽ (скидка 200%)</div>
+                                                <div class="select-price1__drop-item"><span>15 200 ₽</span> → 99 666 ₽ (скидка 2000%)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="" class="block-lk1__button-buy">КУПИТЬ ПОДПИСКУ</a>
+                                    <div class="block-lk1__button-close"></div>
+                                </div>
+                            </td>
+                        </tr>--}}
+                </table>
+                <a href="{{ route("user.subscriptions-without-categories") }}" class="block-lk1__link-bottom">Все варианты подписок</a>
+            </div>
+        @endif
         <div class="block-lk1 style2">
             <div class="block-lk1__title-top">Графики с аналитикой</div>
             <table class="table-subscribe1">
@@ -93,7 +95,7 @@
                             <td>
                                 <a href="{{ route("user.graphs") }}" class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></a>
                             </td>
-                            <td><a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
+                            <td><a href="#" data-fancybox data-src="#modal-subscription-with-{{ $key }}" class="table-subscribe1__more2">Подробнее от подписке</a></td>
                             <td>
                                 <div class="table-subscribe1__days-left">{{ $subscription->days_left_human }}</div>
                             </td>
@@ -103,6 +105,12 @@
                                     <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
                                 </div>
                             </td>
+                            <div class="hidden">
+                                <div id="modal-subscription-with-{{ $key }}">
+                                    <h2>{{ $subscription->title }}</h2>
+                                    {!! $subscription->content !!}
+                                </div>
+                            </div>
                         </tr>
                     @endforeach
                 @else
