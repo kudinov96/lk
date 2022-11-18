@@ -20,7 +20,11 @@ class PaymentController extends Controller
                 ->first();
             $data = $period->fullPaymentDescription($service->id);
         } else {
-            $data = "Заказ услуги \"$service->title\": " . $service->price_after_personal_discount["price"] . " руб. (скидка " . $service->price_after_personal_discount["discount"] . "%)";
+            $data = "Заказ услуги \"$service->title\": " . $service->price_after_personal_discount["price"] . " руб.";
+            if ($service->price_after_personal_discount["discount"]) {
+                $data .= " (скидка " . $service->price_after_personal_discount["discount"] . "%)";
+            }
+
         }
 
         return [

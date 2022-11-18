@@ -1,9 +1,9 @@
 <div class="hidden">
-    <div class="modal-default" id="modal-subscription-payment">
+    <div class="modal-default" id="modal-service-payment">
         <h2>Оплатить услугу</h2>
         <p class="modal-order-title"></p>
 
-        <form id="subscription-payment">
+        <form id="service-payment">
             @csrf
 
             <input type="hidden" name="description">

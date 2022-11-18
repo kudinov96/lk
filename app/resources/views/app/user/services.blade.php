@@ -16,7 +16,9 @@
                                 {{ $course->title }}
                             </div>
                         </td>
-                        <td><a href="#" class="subscription-buy__open table-subscribe1__extend">КУПИТЬ</a></td>
+                        @if(!$user->courses()->where("id", $course->id)->exists())
+                            <td><a href="#" data-fancybox data-src="#modal-service-payment" data-service-id="{{ $course->id }}" data-service-type="{{ \App\Models\Course::class }}" class="item__buy subscription-buy__open table-subscribe1__extend">КУПИТЬ</a></td>
+                        @endif
                     </tr>
                 @endforeach
                 @foreach($services as $key => $service)
@@ -29,14 +31,18 @@
                                 {{ $service->title }}
                             </div>
                         </td>
-                        <td><a href="#" class="subscription-buy__open table-subscribe1__extend">КУПИТЬ</a></td>
+                        @if(!$user->services()->where("id", $service->id)->exists())
+                            <td><a href="#" data-fancybox data-src="#modal-service-payment" data-service-id="{{ $service->id }}" data-service-type="{{ \App\Models\Service::class }}" class="item__buy subscription-buy__open table-subscribe1__extend">КУПИТЬ</a></td>
+                        @endif
                     </tr>
                @endforeach
             </table>
         </div>
     </div>
 
+    <x-service-buy-modal></x-service-buy-modal>
 @stop
 
 @section("javascript")
+    <x-service-buy-js></x-service-buy-js>
 @stop

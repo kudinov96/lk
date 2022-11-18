@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 trait PriceAfterPersonalDiscount
 {
+    protected function actualPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->price_discount ?? $this->price,
+        );
+    }
+
     protected function priceAfterPersonalDiscount(): Attribute
     {
         $user     = auth()->user();
@@ -15,9 +22,9 @@ trait PriceAfterPersonalDiscount
         ])->first();
 
         if ($discount) {
-            $price = $this->pivot->price_discount - ($this->pivot->price_discount / 100 * $discount->count);
+            $price = $this->actual_price - ($this->actual_price / 100 * $discount->count);
         } else {
-            $price = $this->pivot->price_discount;
+            $price = $this->actual_price;
         }
 
         return Attribute::make(

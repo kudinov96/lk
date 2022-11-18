@@ -1,7 +1,7 @@
 <script>
     $(document).ready(function () {
 
-        let $form = $("#modal-subscription-payment");
+        let $form = $("#modal-service-payment");
 
         $(document).on("click", ".select-price1__drop-item", function(){
             let $item     = $(this).closest(".item");
@@ -37,7 +37,7 @@
                         $form.find('input[name="period_id"]').val(period_id);
 
                         /*$.fancybox({
-                            href: '#modal-subscription-payment',
+                            href: '#modal-service-payment',
                             modal: true
                         });*/
                     }
@@ -45,7 +45,7 @@
             });
         });
 
-        $("#subscription-payment").on("submit", function(e) {
+        $("#service-payment").on("submit", function(e) {
             e.preventDefault();
 
             let formData = new FormData($(this)[0]);
