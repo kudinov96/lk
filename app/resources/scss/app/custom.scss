@@ -44,13 +44,29 @@
     }
 }
 
-.block-name1__exit{
-    width: auto;
-    min-width: 203px;
-    padding: 0 15px;
-    &.non-icon{
+.profile-back-btn{
+    a{
+        width: auto;
+        min-width: 203px;
+        padding: 0 15px;
         &:before{
             display: none;
+        }
+    }
+    @media only screen and (max-width: 760px){
+        display: none;
+    }
+}
+
+.page-line_error{
+    h1{
+        margin-bottom: 15px;
+    }
+    a{
+        color: #004dc0;
+        text-decoration: underline;
+        &:hover{
+            text-decoration: none;
         }
     }
 }
