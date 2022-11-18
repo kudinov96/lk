@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Order;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -13,12 +14,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property int    $price_discount
  * @property string $link
  * @property string $preview
+ * @property int    $order
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
 class Course extends Model
 {
+    use Order;
+
     protected $table = "course";
 
     protected $guarded = [

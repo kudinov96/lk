@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Order;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,12 +16,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property bool   $is_test
  * @property string $color
  * @property string $icon
+ * @property int    $order
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
 class Subscription extends Model
 {
+    use Order;
+
     protected $table = "subscription";
 
     protected $guarded = [
