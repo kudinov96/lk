@@ -20,10 +20,14 @@ class CreatePeriodsSubscription
         foreach ($periods as $period_data) {
             if ($period_data["price"]) {
                 list($period_count, $period_count_name) = explode("-", $period_data["count_name"]);
+                $is_default = isset($period_data["is_default"]) ? true : false;
 
                 $period = Period::findByCountName($period_count, $period_count_name);
 
-                $item->periods()->attach($period->id, ["price" => $period_data["price"]]);
+                $item->periods()->attach($period->id, [
+                    "price" => $period_data["price"],
+                    "is_default" => $is_default,
+                ]);
             }
         }
 

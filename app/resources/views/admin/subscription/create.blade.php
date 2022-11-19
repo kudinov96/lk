@@ -40,11 +40,14 @@
                                 <div class="form-group col-md-12">
                                     <div class="periods">
                                         <div class="row">
-                                            <div class="col-xs-6">
+                                            <div class="col-xs-4 mb-0">
                                                 <label class="control-label">Период подписки</label>
                                             </div>
-                                            <div class="col-xs-6">
+                                            <div class="col-xs-4 mb-0">
                                                 <label class="control-label">Цена за период</label><br>
+                                            </div>
+                                            <div class="col-xs-4 mb-0">
+                                                <label class="control-label">Период по умолчанию</label><br>
                                             </div>
                                         </div>
                                         <div class="periods__items">
@@ -55,15 +58,20 @@
                                                     "hidden" => $key > 1
                                                 ])>
                                                     <div class="row">
-                                                        <div class="col-xs-6">
+                                                        <div class="col-xs-4 mb-10">
                                                             <select class="form-control select2 select2-hidden-accessible" name="periods[{{ $key }}][count_name]">
                                                                 @foreach($periods as $period_item)
                                                                     <option value="{{ $period_item->full_count_name }}"> {{ $period_item->full_count_name_human }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-xs-6">
+                                                        <div class="col-xs-4 mb-10">
                                                             <input class="form-control" type="number" min="0" name="periods[{{ $key }}][price]">
+                                                        </div>
+                                                        <div class="col-xs-4 mb-10">
+                                                            <div class="period-default-toggle">
+                                                                <input type="checkbox" name="periods[{{ $key }}][is_default]" class="toggleswitch">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -129,7 +137,9 @@
             $('.toggleswitch').bootstrapToggle({
                 on: "Да",
                 off: "Нет",
-            }).change(function() {
+            });
+
+            $(".is-test").on("change", function(){
                 if ($(this).prop('checked')) {
                     $('.is-test').removeClass('hidden');
                     $('.is-not-test').addClass('hidden');
