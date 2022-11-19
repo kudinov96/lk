@@ -70,3 +70,19 @@
         }
     }
 }
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+}
+
+.form-field_checkbox{
+    display: flex !important;
+    align-items: center;
+    span{
+        font-size: 14px;
+    }
+    input{
+        margin-right: 5px;
+        width: auto;
+    }
+}

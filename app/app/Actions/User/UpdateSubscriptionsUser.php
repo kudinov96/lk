@@ -20,7 +20,7 @@ class UpdateSubscriptionsUser
         $createOrder           = new CreateOrder();
         $createTelegramMessage = new CreateTelegramMessage();
         $telegramBotService    = app(TelegramBotService::class);
-        $tinkoff               = app(TinkoffPaymentService::class);
+        $tinkoffPaymentService = app(TinkoffPaymentService::class);
 
         foreach ($subscriptions as $subscription) {
             $subscriptionModel = $item->subscriptions()->where("id", $subscription["id"])->first();
@@ -78,7 +78,7 @@ class UpdateSubscriptionsUser
                         "Taxation"      => "usn_income",
                     ];
 
-                    $payment_url = $tinkoff->paymentURL($payment, [
+                    $payment_url = $tinkoffPaymentService->paymentURL($payment, [
                         [
                             "Name"     => $subscriptionModel->title,
                             "Price"    => $order->amount,
@@ -101,7 +101,7 @@ class UpdateSubscriptionsUser
                             ]);
                         }
                     } else {
-                        Log::error($tinkoff->error);
+                        Log::error($tinkoffPaymentService->error);
                     }
                 }
             }

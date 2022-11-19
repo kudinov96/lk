@@ -82,6 +82,8 @@ class TinkoffPaymentService
             'Amount'        => round($payment['Amount'] * $amount_multiplicator),
             'Language'      => $payment['Language'],
             'Description'   => $payment['Description'],
+            'Recurrent'     => $payment['Recurrent'] ? 'Y' : '',
+            'CustomerKey'   => $payment['Recurrent'] ? $payment['CustomerKey'] : '',
             'DATA' => [
                 'Email'     => $payment['Email'],
                 'Phone'     => $payment['Phone'],

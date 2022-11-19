@@ -13,11 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoff, UpdateUser $updateUser)
+    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoffPaymentService, UpdateUser $updateUser)
     {
         $user         = auth()->user();
         $service_type = $request->input("service_type");
         $service      = app($service_type)::findOrFail($request->input("service_id"));
+        $auto_renewal = $request->input("auto_renewal") ? true : false;
 
         if ($service_type === Subscription::class) {
             $period = $service->periods()->where("id", $request->input("period_id"))->first();
@@ -50,6 +51,8 @@ class OrderController extends Controller
             "Amount"        => $order->amount,
             "Language"      => "ru",
             "Description"   => $order->description,
+            "Recurrent"     => "Y",
+            "CustomerKey"   => $user->id,
             "Email"         => $order->email,
             "Phone"         => $order->phone,
             "Name"          => $order->name,
@@ -63,14 +66,14 @@ class OrderController extends Controller
             "Quantity" => 1,
         ];
 
-        $payment_url = $tinkoff->paymentURL($payment, $items);
+        $payment_url = $tinkoffPaymentService->paymentURL($payment, $items);
 
         if(!$payment_url) {
-            Log::error($tinkoff->error);
+            Log::error($tinkoffPaymentService->error);
 
             return [
                 "success" => true,
-                "error"   => $tinkoff->error,
+                "error"   => $tinkoffPaymentService->error,
             ];
         }
 

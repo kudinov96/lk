@@ -8,10 +8,9 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function fullDescription(Request $request)
+    public function fullDescription(Request $request): array
     {
         $service_type = $request->input("service_type");
-
         $service      = app($service_type)::findOrFail($request->input("service_id"));
 
         if ($service_type === Subscription::class) {
