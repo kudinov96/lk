@@ -49,7 +49,7 @@ class Subscription extends Model
 
     public function periods(): BelongsToMany
     {
-        return $this->belongsToMany(Period::class, "period_subscription")->withPivot("price");
+        return $this->belongsToMany(Period::class, "period_subscription")->withPivot("price", "is_default");
     }
 
     public function graph_categories(): BelongsToMany
