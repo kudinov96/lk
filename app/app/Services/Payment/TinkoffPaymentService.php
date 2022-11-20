@@ -13,10 +13,13 @@ class TinkoffPaymentService
     private $url_cancel;
     private $url_confirm;
     private $url_get_state;
+    private $url_get_card_list;
+    private $url_charge;
 
     protected $error;
     protected $response;
 
+    protected $json;
     protected $payment_id;
     protected $payment_url;
     protected $payment_status;
@@ -120,6 +123,31 @@ class TinkoffPaymentService
         return FALSE;
     }
 
+    public function getCardList(int $customerKey)
+    {
+        $params = ["CustomerKey" => $customerKey];
+
+        if ($this->sendRequest($this->url_get_card_list, $params)){
+            return $this->json;
+        }
+
+        return FALSE;
+    }
+
+    public function charge(int $paymentId, int $rebillId)
+    {
+        $params = [
+            "PaymentId" => $paymentId,
+            "RebillId"  => $rebillId,
+        ];
+
+        if ($this->sendRequest($this->url_charge, $params)){
+            return $this->payment_status;
+        }
+
+        return FALSE;
+    }
+
     /**
      * Confirm payment
      *
@@ -186,6 +214,7 @@ class TinkoffPaymentService
                     return FALSE;
 
                 } else {
+                    $this->json             = @$json;
                     $this->payment_id       = @$json->PaymentId;
                     $this->payment_url      = @$json->PaymentURL;
                     $this->payment_status   = @$json->Status;
@@ -269,6 +298,8 @@ class TinkoffPaymentService
         $this->url_cancel = $this->acquiring_url . 'Cancel/';
         $this->url_confirm = $this->acquiring_url . 'Confirm/';
         $this->url_get_state = $this->acquiring_url . 'GetState/';
+        $this->url_get_card_list = $this->acquiring_url . 'GetCardList/';
+        $this->url_charge = $this->acquiring_url . 'Charge/';
     }
 
     /**
