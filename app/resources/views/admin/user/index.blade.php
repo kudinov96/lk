@@ -125,7 +125,8 @@
                         </div>
                         <div class="pull-right">
                             {{ $users->appends([
-                                's' => request()->s,
+                                's'       => request()->s,
+                                'sort_by' => request()->sort_by,
                             ])->links() }}
 
                             <div сlass="show-res">

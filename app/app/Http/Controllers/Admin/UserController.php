@@ -40,7 +40,10 @@ class UserController extends VoyagerUserController
         $users  = User::latest();
 
         if ($s) {
-            $users = $users->whereRaw('LOWER("name") LIKE ? ',['%' . strtolower($s) . '%']);
+            $users = $users
+                ->whereRaw('LOWER("name") LIKE ? ',['%' . mb_strtolower($s) . '%'])
+                ->orWhereRaw('telegram_name LIKE ? ',['%' . mb_strtolower($s) . '%'])
+                ->orWhere('telegram_id', (int) $s);
         }
 
         if ($sort_by) {
