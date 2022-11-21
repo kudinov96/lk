@@ -37,7 +37,7 @@ class UserController extends VoyagerUserController
         $s       = $request->input("s") ?? "";
         $sort_by = $request->input("sort_by") ?? "";
 
-        $users  = User::latest();
+        $users  = User::query();
 
         if ($s) {
             $users = $users
@@ -65,7 +65,9 @@ class UserController extends VoyagerUserController
             }
         }
 
-        $users = $users->paginate(30);
+        $users = $users->orderByDesc("created_at")->paginate(
+            perPage: 30,
+        );
 
         $subscriptions   = Subscription::all();
         $graphCategories = GraphCategory::query()
