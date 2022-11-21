@@ -6,7 +6,7 @@
 @section("content")
     <div class="page-line">
         <div class="block-name1 profile-back-btn">
-            <a href="{{ route("user.profile") }}" class="block-name1__exit"><span>Редактировать профиль</span></a>
+            <a href="{{ route("user.profile") }}" class="block-name1__exit"><span>Личный кабинет</span></a>
         </div>
         @if($subscriptions->exists())
             <div class="title2"><span>Графики от Романа Андреева</span></div>

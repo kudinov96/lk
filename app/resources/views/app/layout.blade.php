@@ -18,7 +18,7 @@
         <div class="mobile-menu1">
             <div class="mobile-menu1__black"></div>
             <ul class="mobile-menu1__list">
-               <li class="mobile-menu1__item"><a href="{{ route("user.subscriptions-with-categories") }}">Профиль</a></li>
+               <li class="mobile-menu1__item"><a href="{{ route("user.subscriptions-with-categories") }}">Личный кабинет</a></li>
                 <li class="mobile-menu1__item"><a href="{{ route("user.subscriptions-with-categories") }}">Графики</a></li>
             </ul>
         </div>
