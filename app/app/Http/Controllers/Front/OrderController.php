@@ -78,9 +78,7 @@ class OrderController extends Controller
         }
 
         if ($request->input("service_type") === Subscription::class) {
-            $user->subscriptions()->where([
-                ["service_type", Subscription::class],
-            ])->updateExistingPivot($request->input("service_id"), [
+            $order->update([
                 "payment_id" => $payment_info["payment_id"],
             ]);
         }

@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Subscription;
+use App\Models\User;
 use App\Services\Payment\TinkoffPaymentService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -35,7 +37,6 @@ class Autopay extends Command
                 ["is_auto_renewal", true],
                 ["auto_renewal_try", "<", 3],
             ])
-            ->whereNotNull("payment_id")
             ->whereDate("date_end", ">=", now())
             ->get();
 
@@ -45,12 +46,16 @@ class Autopay extends Command
             $date_now   = Carbon::now();
 
             if (($date_end >= $date_now) && ($date_end_3 <= $date_now)) {
-                $user_id    = $subscription->user_id;
-                $cardList   = $tinkoffPaymentService->getCardList($user_id);
-                $rebill_id  = end($cardList)->RebillId;
-                $payment_id = $subscription["payment_id"];
+                $user         = User::findOrFail($subscription->user_id);
+                $order        = $user->orders()->where([
+                    ["service_type", Subscription::class],
+                    ["service_id", $subscription->subscription_id],
+                ])->first();
+                $cardList     = $tinkoffPaymentService->getCardList($user->id);
+                $rebill_id    = end($cardList)->RebillId;
+                $payment_id   = $order->payment_id;
 
-                //$tinkoffPaymentService->charge($payment_id, $rebillId);
+                //$tinkoffPaymentService->charge($payment_id, $rebill_id);
             }
 
         }

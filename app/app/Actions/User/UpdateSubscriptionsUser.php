@@ -90,9 +90,7 @@ class UpdateSubscriptionsUser
                     if($payment_info["payment_url"]) {
                         $text = "Ссылка на оплату услуги: <a href='" . $payment_info["payment_url"] . "'>$order->description</a>";
 
-                        $item->subscriptions()->where([
-                            ["service_type", Subscription::class],
-                        ])->updateExistingPivot($subscriptionModel->id, [
+                        $order->update([
                             "payment_id" => $payment_info["payment_id"],
                         ]);
 
