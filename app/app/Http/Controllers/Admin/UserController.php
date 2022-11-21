@@ -65,7 +65,7 @@ class UserController extends VoyagerUserController
             }
         }
 
-        $users = $users->orderByDesc("created_at")->paginate(
+        $users = $users->orderByDesc("id")->paginate(
             perPage: 30,
         );
 
