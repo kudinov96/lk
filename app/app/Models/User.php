@@ -69,7 +69,7 @@ class User extends \TCG\Voyager\Models\User
 
     public function subscriptions(): BelongsToMany
     {
-        return $this->belongsToMany(Subscription::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal");
+        return $this->belongsToMany(Subscription::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal", "auto_renewal_try", "payment_id");
     }
 
     public function courses(): BelongsToMany

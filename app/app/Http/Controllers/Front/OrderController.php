@@ -66,9 +66,9 @@ class OrderController extends Controller
             "Quantity" => 1,
         ];
 
-        $payment_url = $tinkoffPaymentService->paymentURL($payment, $items);
+        $payment_info = $tinkoffPaymentService->paymentURL($payment, $items);
 
-        if(!$payment_url) {
+        if(!$payment_info["payment_url"]) {
             Log::error($tinkoffPaymentService->error);
 
             return [
@@ -77,9 +77,17 @@ class OrderController extends Controller
             ];
         }
 
+        if ($request->input("service_type") === Subscription::class) {
+            $user->subscriptions()->where([
+                ["service_type", Subscription::class],
+            ])->updateExistingPivot($request->input("service_id"), [
+                "payment_id" => $payment_info["payment_id"],
+            ]);
+        }
+
         return [
             "success"     => true,
-            "payment_url" => $payment_url
+            "payment_url" => $payment_info["payment_url"],
         ];
     }
 }

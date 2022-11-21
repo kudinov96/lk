@@ -78,7 +78,7 @@ class UpdateSubscriptionsUser
                         "Taxation"      => "usn_income",
                     ];
 
-                    $payment_url = $tinkoffPaymentService->paymentURL($payment, [
+                    $payment_info = $tinkoffPaymentService->paymentURL($payment, [
                         [
                             "Name"     => $subscriptionModel->title,
                             "Price"    => $order->amount,
@@ -87,8 +87,14 @@ class UpdateSubscriptionsUser
                         ]
                     ]);
 
-                    if($payment_url) {
-                        $text = "Ссылка на оплату услуги: <a href='" . $payment_url . "'>$order->description</a>";
+                    if($payment_info["payment_url"]) {
+                        $text = "Ссылка на оплату услуги: <a href='" . $payment_info["payment_url"] . "'>$order->description</a>";
+
+                        $item->subscriptions()->where([
+                            ["service_type", Subscription::class],
+                        ])->updateExistingPivot($subscriptionModel->id, [
+                            "payment_id" => $payment_info["payment_id"],
+                        ]);
 
                         if ($telegramBotService->sendMessage(
                             chat_id: $item->telegram_id,

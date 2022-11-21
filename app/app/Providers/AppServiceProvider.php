@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(TinkoffPaymentService::class, function () {
+        $this->app->bind(TinkoffPaymentService::class, function () {
             return new TinkoffPaymentService(
                 acquiring_url: "https://securepay.tinkoff.ru/v2/",
                 terminal_id: config("payment.tinkoff_terminal_key"),

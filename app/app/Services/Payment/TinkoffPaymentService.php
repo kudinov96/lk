@@ -101,7 +101,10 @@ class TinkoffPaymentService
         );
 
         if( $this->sendRequest($this->url_init, $params) ){
-            return $this->payment_url;
+            return [
+                "payment_id"  => $this->payment_id,
+                "payment_url" => $this->payment_url,
+            ];
         }
 
         return FALSE;
