@@ -20,12 +20,17 @@ class ProfileController extends Controller
         $user             = auth()->user();
         $subscriptionIcon = $user->subscriptions()->first()->icon ?? "";
 
-        $subscriptionsWithoutCategories = $user->subscriptions()->withoutCategories()->get();
-        $subscriptionsWithCategories    = $user->subscriptions()->withCategories()->get();
+        $userSubscriptionsWithoutCategories = $user->subscriptions()->withoutCategories()->get();
+        $userSubscriptionsWithCategories    = $user->subscriptions()->withCategories()->get();
+
+        $subscriptionsWithoutCategories = Subscription::withoutCategories()->get();
+        $subscriptionsWithCategories = Subscription::withCategories()->get();
 
         return response()->view("app.user.profile", compact(
             "user",
             "subscriptionIcon",
+            "userSubscriptionsWithoutCategories",
+            "userSubscriptionsWithCategories",
             "subscriptionsWithoutCategories",
             "subscriptionsWithCategories",
         ));
@@ -74,12 +79,14 @@ class ProfileController extends Controller
 
     public function graphs(): Response
     {
-        $user          = auth()->user();
-        $subscriptions = $user->subscriptions()->withCategories();
+        $user                            = auth()->user();
+        $userSubscriptionsWithCategories = $user->subscriptions()->withCategories()->get();
+        $subscriptionsWithCategories     = Subscription::withCategories()->get();
 
         return response()->view("app.user.graphs", compact(
             "user",
-            "subscriptions",
+            "userSubscriptionsWithCategories",
+            "subscriptionsWithCategories",
         ));
     }
 

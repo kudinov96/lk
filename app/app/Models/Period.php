@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Order;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Traits\Order;
 
 /**
  * @property int    $id
