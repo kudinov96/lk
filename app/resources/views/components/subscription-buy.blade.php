@@ -3,7 +3,7 @@
         <div class="block-lk1__button-select">
             <div class="select-price1">
                 @php
-                    $firstPeriod            = $subscription->periods()->first();
+                    $firstPeriod            = $subscription->periods()->wherePivot("is_default", true)->first();
                     $priceAfterDiscount     = $firstPeriod->priceAfterDiscount($subscription->id);
                     $fullPaymentDescription = $firstPeriod->full_count_name_human . " — <span class='discount-price'>" . $firstPeriod->pivot->price . "</span> → " . $firstPeriod->fullDescription($subscription->id);
                 @endphp
