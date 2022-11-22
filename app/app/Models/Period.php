@@ -6,11 +6,13 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Traits\Order;
 
 /**
  * @property int    $id
  * @property int    $count
  * @property string $count_name
+ * @property int    $order
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Period extends Model
 {
+    use Order;
+
     protected $table = "period";
 
     protected $guarded = [
