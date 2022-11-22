@@ -97,4 +97,10 @@
             </div>
         @endif
     </div>
+
+    <x-service-buy-modal></x-service-buy-modal>
 @endsection
+
+@section("javascript")
+    <x-service-buy-js></x-service-buy-js>
+@stop
