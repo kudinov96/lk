@@ -23,10 +23,14 @@
         </div>
         @if(setting("site.has_subsctiptions"))
             <div class="block-lk1 style1">
-                <div class="block-lk1__title-top">Ваши подписки</div>
+                @if($userSubscriptionsWithoutCategories->isNotEmpty())
+                    <div class="block-lk1__title-top">Ваши подписки</div>
+                @else
+                    <div class="block-lk1__title-top">У вас нет подписок</div>
+                @endif
                 <table class="table-subscribe1">
-                    @if($subscriptionsWithoutCategories->isNotEmpty())
-                        @foreach($subscriptionsWithoutCategories as $key => $subscription)
+                    @if($userSubscriptionsWithoutCategories->isNotEmpty())
+                        @foreach($userSubscriptionsWithoutCategories as $key => $subscription)
                             <tr class="item">
                                 <td>
                                     <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span> до {{ $subscription->date_end }}</div>
@@ -51,11 +55,26 @@
                             </tr>
                         @endforeach
                     @else
-                        <tr class="item">
-                            <td>
-                                <p>У вас нет купленных подписок</p>
-                            </td>
-                        </tr>
+                        @if($subscriptionsWithoutCategories->isNotEmpty())
+                            @foreach($subscriptionsWithoutCategories as $key => $subscription)
+                                <tr class="item">
+                                    <td>
+                                        <div class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></div>
+                                    </td>
+                                    <td>
+                                        <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
+                                    <td>
+                                        <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                    </td>
+                                    <div class="hidden">
+                                        <div id="modal-subscription-{{ $key }}">
+                                            <h2>{{ $subscription->title }}</h2>
+                                            {!! $subscription->content !!}
+                                        </div>
+                                    </div>
+                                </tr>
+                            @endforeach
+                        @endif
                     @endif
                     {{--<tr>
                             <td class="no-padding-mobile">
@@ -87,10 +106,14 @@
             </div>
         @endif
         <div class="block-lk1 style2">
-            <div class="block-lk1__title-top">Графики с аналитикой</div>
+            @if($userSubscriptionsWithCategories->isNotEmpty())
+                <div class="block-lk1__title-top">Графики с аналитикой</div>
+            @else
+                <div class="block-lk1__title-top">У вас нет подписок на графики</div>
+            @endif
             <table class="table-subscribe1">
-                @if($subscriptionsWithCategories->isNotEmpty())
-                    @foreach($subscriptionsWithCategories as $key => $subscription)
+                @if($userSubscriptionsWithCategories->isNotEmpty())
+                    @foreach($userSubscriptionsWithCategories as $key => $subscription)
                         <tr class="item">
                             <td>
                                 <a href="{{ route("user.graphs") }}" class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></a>
@@ -114,11 +137,26 @@
                         </tr>
                     @endforeach
                 @else
-                    <tr class="item">
-                        <td>
-                            <p>У вас нет купленных графиков</p>
-                        </td>
-                    </tr>
+                    @if($subscriptionsWithCategories->isNotEmpty())
+                        @foreach($subscriptionsWithCategories as $key => $subscription)
+                            <tr class="item">
+                                <td>
+                                    <a href="{{ route("user.graphs") }}" class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></a>
+                                </td>
+                                <td>
+                                    <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
+                                <td>
+                                    <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                                </td>
+                                <div class="hidden">
+                                    <div id="modal-subscription-{{ $key }}">
+                                        <h2>{{ $subscription->title }}</h2>
+                                        {!! $subscription->content !!}
+                                    </div>
+                                </div>
+                            </tr>
+                        @endforeach
+                    @endif
                 @endif
                 {{--<tr>
                     <td class="no-padding-mobile">
