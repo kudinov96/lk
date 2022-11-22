@@ -5,8 +5,11 @@
 
 @section("content")
     <div class="page-line">
+        <div class="block-name1 block-name1_lk block-name1_lk_without-title profile-back-btn">
+            <a href="{{ route("user.profile") }}" class="block-name1__exit"><span>Личный кабинет</span></a>
+        </div>
         <div class="block-lk1 style1">
-            <div class="block-lk1__title-top">Все подписки на графики</div>
+            <div class="block-lk1__title-top">Все подписки</div>
             <table class="table-subscribe1">
                 @foreach($subscriptions as $key => $subscription)
                     <tr class="item">

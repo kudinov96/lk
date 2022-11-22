@@ -86,3 +86,22 @@ input[type="checkbox"] {
         width: auto;
     }
 }
+
+.table-subscribe1__title1{
+    &:hover{
+        text-decoration: underline;
+    }
+}
+.title2_lk{
+    padding-right: 230px;
+}
+
+
+.block-name1_lk{
+    z-index: 1000;
+    margin-bottom: 20px;
+}
+
+.block-name1_lk_without-title{
+    margin-bottom: 140px;
+}

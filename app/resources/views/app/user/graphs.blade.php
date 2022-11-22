@@ -5,14 +5,14 @@
 
 @section("content")
     <div class="page-line">
-        <div class="block-name1 profile-back-btn">
-            <a href="{{ route("user.profile") }}" class="block-name1__exit"><span>Редактировать профиль</span></a>
+        <div class="block-name1 block-name1_lk profile-back-btn">
+            <a href="{{ route("user.profile") }}" class="block-name1__exit"><span>Личный кабинет</span></a>
         </div>
-        @if($subscriptions->exists())
-            <div class="title2"><span>Графики от Романа Андреева</span></div>
+        <div class="title2 title2_lk"><span>Графики от Романа Андреева</span></div>
+        @if($userSubscriptionsWithCategories->isNotEmpty())
             <div class="list-information1">
                 <div class="list-information1__clm">
-                    @foreach($subscriptions->get() as $subscription)
+                    @foreach($userSubscriptionsWithCategories as $subscription)
                         @php $graph_categories = $subscription->graph_categories()->withoutParent()->with("subcategories", "tools")->get(); @endphp
 
                         @foreach($graph_categories as $category)
@@ -70,15 +70,28 @@
                     @endforeach
                 </div>
             </div>
-        @else
+        @elseif($subscriptionsWithCategories->isNotEmpty())
             <div class="block-lk1 style2">
-                <div class="block-lk1__title-top">Графики с аналитикой</div>
+                <div class="block-lk1__title-top">У вас нет подписок на графики</div>
                 <table class="table-subscribe1">
-                    <tr class="item">
-                        <td>
-                            <p>У вас нет купленных графиков</p>
-                        </td>
-                    </tr>
+                    @foreach($subscriptionsWithCategories as $key => $subscription)
+                        <tr class="item">
+                            <td>
+                                <a href="{{ route("user.graphs") }}" class="item__title table-subscribe1__title1"><span>{{ $subscription->title }}</span></a>
+                            </td>
+                            <td>
+                                <a href="#" data-fancybox data-src="#modal-subscription-{{ $key }}" class="table-subscribe1__more">Подробнее</a></td>
+                            <td>
+                                <x-subscription-buy :subscription="$subscription" :user="$user"></x-subscription-buy>
+                            </td>
+                            <div class="hidden">
+                                <div id="modal-subscription-{{ $key }}">
+                                    <h2>{{ $subscription->title }}</h2>
+                                    {!! $subscription->content !!}
+                                </div>
+                            </div>
+                        </tr>
+                    @endforeach
                 </table>
                 <a href="{{ route("user.subscriptions-with-categories") }}" class="block-lk1__link-bottom">Все варианты подписок на графики</a>
             </div>

@@ -1,12 +1,12 @@
 {
-  "resources/scss/app/custom.scss": {
-    "file": "assets/custom.7f6397ff.css",
-    "src": "resources/scss/app/custom.scss",
+  "resources/scss/admin/admin.scss": {
+    "file": "assets/admin.7b0a33f5.css",
+    "src": "resources/scss/admin/admin.scss",
     "isEntry": true
   },
-  "resources/scss/admin/admin.scss": {
-    "file": "assets/admin.846e031e.css",
-    "src": "resources/scss/admin/admin.scss",
+  "resources/scss/app/custom.scss": {
+    "file": "assets/custom.7cb07cb8.css",
+    "src": "resources/scss/app/custom.scss",
     "isEntry": true
   }
 }

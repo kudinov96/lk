@@ -15,6 +15,7 @@
                         @method("PUT")
                         @csrf
 
+                        <input type="hidden" name="order" value="{{ $item->order }}">
                         <div class="panel-body">
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="name">Название</label>
@@ -51,73 +52,43 @@
                                 <div class="form-group col-md-12">
                                     <div class="periods">
                                         <div class="row">
-                                            <div class="col-xs-4 mb-0">
+                                            <div class="col-xs-3 mb-0">
                                                 <label class="control-label">Период подписки</label>
                                             </div>
-                                            <div class="col-xs-4 mb-0">
+                                            <div class="col-xs-3 mb-0">
                                                 <label class="control-label">Цена за период</label><br>
                                             </div>
-                                            <div class="col-xs-4 mb-0">
+                                            <div class="col-xs-3 mb-0">
                                                 <label class="control-label">Период по умолчанию</label><br>
                                             </div>
                                         </div>
-                                        <div class="periods__items">
+                                        <div class="periods__items" id="periods-items">
                                             @foreach($item->periods as $key => $item_period)
-                                                <div @class([
-                                                    "periods__item",
-                                                    "item-" . ++$key,
-                                                ])>
+                                                <div class="periods__item">
                                                     <div class="row">
-                                                        <div class="col-xs-4 mb-10">
+                                                        <div class="col-xs-3 mb-10">
                                                             <select class="form-control select2 select2-hidden-accessible" name="periods[{{ $key }}][count_name]">
                                                                 @foreach($periods as $period_item)
                                                                     <option value="{{ $period_item->full_count_name }}" @if($item_period->full_count_name === $period_item->full_count_name) selected @endif>{{ $period_item->full_count_name_human }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-xs-4 mb-10">
+                                                        <div class="col-xs-3 mb-10">
                                                             <input class="form-control" type="number" min="0" name="periods[{{ $key }}][price]" value="@if($item_period){{ $item_period->pivot->price }}@endif">
                                                         </div>
-                                                        <div class="col-xs-4 mb-10">
+                                                        <div class="col-xs-3 mb-10">
                                                             <div class="period-default-toggle">
-                                                                <input type="checkbox" name="periods[{{ $key }}][is_default]" class="toggleswitch" @if($item_period->pivot->is_default) checked @endif>
+                                                                <input type="checkbox" id="period-is-default-0" name="periods[{{ $key }}][is_default]" class="toggleswitch" @if($item_period->pivot->is_default) checked @endif>
                                                             </div>
+                                                        </div>
+                                                        <div class="col-xs-3 mb-10">
+                                                            <div class="btn btn-danger remove_period"><i class="voyager-trash"></i> Удалить</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endforeach
-
-                                            @php
-                                                $count = $periods->count();
-                                                $key   = isset($key) ? ++$key : 0;
-                                            @endphp
-                                            @for($key; $key <= $count; $key++)
-                                                <div @class([
-                                                    "periods__item",
-                                                    "item-" . $key,
-                                                    "hidden" => $key > 0
-                                                ])>
-                                                    <div class="row">
-                                                        <div class="col-xs-4 mb-10">
-                                                            <select class="form-control select2 select2-hidden-accessible" name="periods[{{ $key }}][count_name]">
-                                                                @foreach($periods as $period_item)
-                                                                    <option value="{{ $period_item->full_count_name }}">{{ $period_item->full_count_name_human }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-xs-4 mb-10">
-                                                            <input class="form-control" type="number" min="0" name="periods[{{ $key }}][price]">
-                                                        </div>
-                                                        <div class="col-xs-4 mb-10">
-                                                            <div class="period-default-toggle">
-                                                                <input type="checkbox" name="periods[{{ $key }}][is_default]" class="toggleswitch" @if(isset($period_item->pivot->is_default) && $period_item->pivot->is_default) checked @endif>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endfor
                                         </div>
-                                        <div class="btn btn-success add_period" data-count="{{ $item->periods()->count() + 1 }}" data-total-count="{{ $periods->count() }}"><i class="voyager-plus"></i> Добавить период</div>
+                                        <div class="btn btn-success add_period" data-number="{{ $item->periods()->count() }}"><i class="voyager-plus"></i> Добавить период</div>
                                     </div>
                                 </div>
 
@@ -178,6 +149,7 @@
 @section('javascript')
     <script>
         $(document).ready(function () {
+            let periods = @json($periods);
 
             $('.toggleswitch').bootstrapToggle({
                 on: "Да",
@@ -201,17 +173,46 @@
             tinymce.init(window.voyagerTinyMCE.getConfig(additionalConfig));
 
             $(document).on("click", ".add_period", function(){
-                let count       = $(this).data("count");
-                let total_count = parseInt($(this).data("total-count"));
+                let number = $(this).data("number");
+                number++;
 
-                $(".periods__item.item-" + count).removeClass("hidden");
+                html = '<div class="periods__item">' +
+                            '<div class="row">' +
+                                '<div class="col-xs-3 mb-10">' +
+                                    '<select class="form-control select2 select2-hidden-accessible" id="period-count-name-' + number + '" name="periods[' + number + '][count_name]">';
+                                        $.each(periods, function(index, index_data) {
+                                            html += '<option value="' + index_data.full_count_name + '">' + index_data.full_count_name_human + '</option>';
+                                        });
+                            html += '</select>' +
+                                '</div>' +
+                                '<div class="col-xs-3 mb-10">' +
+                                    '<input class="form-control" type="number" min="0" name="periods[' + number + '][price]">' +
+                                '</div>' +
+                                '<div class="col-xs-3 mb-10">' +
+                                    '<div class="period-default-toggle">' +
+                                        '<input type="checkbox" id="period-is-default-' + number + '" name="periods[' + number + '][is_default]" class="toggleswitch">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-xs-3 mb-10">' +
+                                    '<div class="btn btn-danger remove_period"><i class="voyager-trash"></i> Удалить</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
 
-                count++;
-                if (count > total_count) {
-                    $(this).addClass("hidden");
-                }
+                $("#periods-items").append(html);
+                $('#period-count-name-' + number).select2();
+                $('#period-count-name-' + number).select2();
+                $('#period-is-default-' + number).bootstrapToggle({
+                    on: "Да",
+                    off: "Нет",
+                });
+                $(this).data("number", number);
+            });
 
-                $(this).data("count", count);
+            $(document).on("click", ".remove_period", function() {
+                let $item = $(this).closest(".periods__item");
+
+                $item.remove();
             });
 
         });

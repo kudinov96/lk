@@ -37,10 +37,13 @@ class UserController extends VoyagerUserController
         $s       = $request->input("s") ?? "";
         $sort_by = $request->input("sort_by") ?? "";
 
-        $users  = User::latest();
+        $users  = User::query();
 
         if ($s) {
-            $users = $users->whereRaw('LOWER("name") LIKE ? ',['%' . strtolower($s) . '%']);
+            $users = $users
+                ->whereRaw('LOWER("name") LIKE ? ',['%' . mb_strtolower($s) . '%'])
+                ->orWhereRaw('telegram_name LIKE ? ',['%' . mb_strtolower($s) . '%'])
+                ->orWhere('telegram_id', (int) $s);
         }
 
         if ($sort_by) {
@@ -62,7 +65,9 @@ class UserController extends VoyagerUserController
             }
         }
 
-        $users = $users->paginate(30);
+        $users = $users->orderByDesc("id")->paginate(
+            perPage: 30,
+        );
 
         $subscriptions   = Subscription::all();
         $graphCategories = GraphCategory::query()
