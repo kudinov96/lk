@@ -7,7 +7,6 @@ use App\Actions\TelegramMessage\CreateTelegramMessage;
 use App\Actions\User\UpdateSubscriptionsUser;
 use App\Enums\OrderStatus;
 use App\Enums\TelegramMessageFrom;
-use App\Helpers\PaymentHelper;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\Payment\TinkoffPaymentService;
@@ -48,11 +47,11 @@ class Autopay extends Command
             ->get();
 
         foreach ($subscriptions as $subscription) {
-            $date_end   = Carbon::parse($subscription->date_end);
-            $date_end_3 = Carbon::parse($subscription->date_end)->subDays(3);
-            $date_now   = Carbon::now();
+            $date_end              = Carbon::parse($subscription->date_end);
+            $date_end_3            = Carbon::parse($subscription->date_end)->subDays(3);
+            $auto_renewal_try_date = Carbon::parse($subscription->auto_renewal_try_date);
 
-            if (($date_end >= $date_now) && ($date_end_3 <= $date_now)) {
+            if (($date_end >= now()) && ($date_end_3 <= now()) && $auto_renewal_try_date->addDay() < now()) {
                 $user         = User::findOrFail($subscription->user_id);
                 $order        = $user->orders()->where([
                     ["service_type", Subscription::class],
@@ -62,7 +61,20 @@ class Autopay extends Command
                 $rebill_id    = end($cardList)->RebillId;
                 $payment_id   = $order->payment_id;
 
+                if (!$payment_id || !$rebill_id) {
+                    continue;
+                }
+
                 $paymentResponse = $tinkoffPaymentService->charge($payment_id, $rebill_id);
+
+                if (!$paymentResponse) {
+                    DB::table("subscription_users")
+                        ->where("subscription_id", $subscription->subscription_id)
+                        ->update([
+                            "auto_renewal_try"      => ++$subscription->auto_renewal_try,
+                            "auto_renewal_try_date" => now(),
+                        ]);
+                }
 
                 if ($paymentResponse && $paymentResponse->Status === OrderStatus::CONFIRMED->value) {
                     $subscriptionModel         = Subscription::findOrFail($subscription->subscription_id);
@@ -72,6 +84,13 @@ class Autopay extends Command
 
                     list($count , $count_name) = explode("-", $period->full_count_name);
                     $new_date_end = Carbon::make($subscription->date_end)->add($count, $count_name);
+
+                    DB::table("subscription_users")
+                        ->where("subscription_id", $subscription->subscription_id)
+                        ->update([
+                            "auto_renewal_try"      => 0,
+                            "auto_renewal_try_date" => null,
+                        ]);
 
                     $createOrder->handle([
                         "description"     => $order->description,
