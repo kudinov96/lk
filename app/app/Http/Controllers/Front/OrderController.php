@@ -15,10 +15,10 @@ class OrderController extends Controller
 {
     public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoffPaymentService, UpdateUser $updateUser)
     {
-        $user         = auth()->user();
-        $service_type = $request->input("service_type");
-        $service      = app($service_type)::findOrFail($request->input("service_id"));
-        $auto_renewal = $request->input("auto_renewal") ? true : false;
+        $user            = auth()->user();
+        $service_type    = $request->input("service_type");
+        $service         = app($service_type)::findOrFail($request->input("service_id"));
+        $is_auto_renewal = $request->input("is_auto_renewal") ? true : false;
 
         if ($service_type === Subscription::class) {
             $period = $service->periods()->where("id", $request->input("period_id"))->first();
@@ -44,6 +44,7 @@ class OrderController extends Controller
             "service_id"      => $request->input("service_id"),
             "service_type"    => $request->input("service_type"),
             "period_id"       => $request->input("period_id"),
+            "is_auto_renewal" => $is_auto_renewal,
         ]);
 
         $payment = [
@@ -62,7 +63,7 @@ class OrderController extends Controller
         $items[] = [
             "Name"     => $service->title,
             "Price"    => $order->amount,
-            "NDS"      => "vat20",
+            "NDS"      => "none",
             "Quantity" => 1,
         ];
 
@@ -77,11 +78,9 @@ class OrderController extends Controller
             ];
         }
 
-        if ($request->input("service_type") === Subscription::class) {
-            $order->update([
-                "payment_id" => $payment_info["payment_id"],
-            ]);
-        }
+        $order->update([
+            "payment_id" => $payment_info["payment_id"],
+        ]);
 
         return [
             "success"     => true,

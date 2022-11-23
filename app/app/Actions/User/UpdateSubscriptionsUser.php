@@ -65,6 +65,7 @@ class UpdateSubscriptionsUser
                         "service_id"      => $subscriptionModel->id,
                         "service_type"    => Subscription::class,
                         "period_id"       => $period->id,
+                        "is_auto_renewal" => $is_auto_renewal,
                     ]);
 
                     $payment = [
@@ -72,17 +73,22 @@ class UpdateSubscriptionsUser
                         "Amount"        => $order->amount,
                         "Language"      => "ru",
                         "Description"   => $order->description,
+                        'CustomerKey'   => $item->id,
                         "Email"         => $order->email,
                         "Phone"         => $order->phone,
                         "Name"          => $order->name,
                         "Taxation"      => "usn_income",
                     ];
 
+                    if ($is_auto_renewal) {
+                        $payment["Recurrent"] = "Y";
+                    }
+
                     $payment_info = $tinkoffPaymentService->paymentURL($payment, [
                         [
                             "Name"     => $subscriptionModel->title,
                             "Price"    => $order->amount,
-                            "NDS"      => "vat20",
+                            "NDS"      => "none",
                             "Quantity" => 1,
                         ]
                     ]);

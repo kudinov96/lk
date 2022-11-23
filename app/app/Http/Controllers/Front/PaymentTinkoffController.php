@@ -72,17 +72,19 @@ class PaymentTinkoffController extends Controller
             if ($user->subscriptions()->where("id", $order->subscription_id)->exists()) {
                 $updateSubscriptions->handle($user, [
                     [
-                        "id"      => $order->service_id,
-                        "updated" => "1",
-                        "period"  => $period->full_count_name,
+                        "id"              => $order->service_id,
+                        "updated"         => "1",
+                        "period"          => $period->full_count_name,
+                        "is_auto_renewal" => $order->is_auto_renewal,
                     ],
                 ]);
             } else {
                 $createSubscriptions->handle($user, [
                     [
-                        "id"     => $order->service_id,
-                        "added"  => "1",
-                        "period" => $period->full_count_name,
+                        "id"              => $order->service_id,
+                        "added"           => "1",
+                        "period"          => $period->full_count_name,
+                        "is_auto_renewal" => $order->is_auto_renewal,
                     ],
                 ]);
             }

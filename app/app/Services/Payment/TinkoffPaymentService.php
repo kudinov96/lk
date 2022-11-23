@@ -2,7 +2,6 @@
 
 namespace App\Services\Payment;
 
-
 class TinkoffPaymentService
 {
     private $acquiring_url;
@@ -85,8 +84,8 @@ class TinkoffPaymentService
             'Amount'        => round($payment['Amount'] * $amount_multiplicator),
             'Language'      => $payment['Language'],
             'Description'   => $payment['Description'],
-            'Recurrent'     => $payment['Recurrent'] ? 'Y' : '',
-            'CustomerKey'   => $payment['Recurrent'] ? $payment['CustomerKey'] : '',
+            'Recurrent'     => isset($payment['Recurrent']) ? 'Y' : null,
+            'CustomerKey'   => $payment['CustomerKey'] ?? null,
             'DATA' => [
                 'Email'     => $payment['Email'],
                 'Phone'     => $payment['Phone'],
@@ -145,7 +144,7 @@ class TinkoffPaymentService
         ];
 
         if ($this->sendRequest($this->url_charge, $params)){
-            return $this->payment_status;
+            return $this->json;
         }
 
         return FALSE;

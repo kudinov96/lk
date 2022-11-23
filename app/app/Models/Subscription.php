@@ -64,7 +64,8 @@ class Subscription extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal", "auto_renewal_try");
+        return $this->belongsToMany(User::class, "subscription_users")
+            ->withPivot("date_start", "date_end", "is_auto_renewal", "auto_renewal_try", "auto_renewal_try_date");
     }
 
     public function scopeWithCategories(Builder $query): Builder
