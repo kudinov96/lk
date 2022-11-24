@@ -49,7 +49,7 @@ class Subscription extends Model
 
     public function periods(): BelongsToMany
     {
-        return $this->belongsToMany(Period::class, "period_subscription")->withPivot("price");
+        return $this->belongsToMany(Period::class, "period_subscription")->withPivot("price", "is_default");
     }
 
     public function graph_categories(): BelongsToMany
@@ -64,7 +64,8 @@ class Subscription extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, "subscription_users")->withPivot("date_start", "date_end", "is_auto_renewal");
+        return $this->belongsToMany(User::class, "subscription_users")
+            ->withPivot("date_start", "date_end", "is_auto_renewal", "auto_renewal_try", "auto_renewal_try_date");
     }
 
     public function scopeWithCategories(Builder $query): Builder

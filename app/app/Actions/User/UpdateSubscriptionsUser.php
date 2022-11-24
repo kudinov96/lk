@@ -20,7 +20,7 @@ class UpdateSubscriptionsUser
         $createOrder           = new CreateOrder();
         $createTelegramMessage = new CreateTelegramMessage();
         $telegramBotService    = app(TelegramBotService::class);
-        $tinkoff               = app(TinkoffPaymentService::class);
+        $tinkoffPaymentService = app(TinkoffPaymentService::class);
 
         foreach ($subscriptions as $subscription) {
             $subscriptionModel = $item->subscriptions()->where("id", $subscription["id"])->first();
@@ -65,6 +65,7 @@ class UpdateSubscriptionsUser
                         "service_id"      => $subscriptionModel->id,
                         "service_type"    => Subscription::class,
                         "period_id"       => $period->id,
+                        "is_auto_renewal" => $is_auto_renewal,
                     ]);
 
                     $payment = [
@@ -72,23 +73,32 @@ class UpdateSubscriptionsUser
                         "Amount"        => $order->amount,
                         "Language"      => "ru",
                         "Description"   => $order->description,
+                        'CustomerKey'   => $item->id,
                         "Email"         => $order->email,
                         "Phone"         => $order->phone,
                         "Name"          => $order->name,
                         "Taxation"      => "usn_income",
                     ];
 
-                    $payment_url = $tinkoff->paymentURL($payment, [
+                    if ($is_auto_renewal) {
+                        $payment["Recurrent"] = "Y";
+                    }
+
+                    $payment_info = $tinkoffPaymentService->paymentURL($payment, [
                         [
                             "Name"     => $subscriptionModel->title,
                             "Price"    => $order->amount,
-                            "NDS"      => "vat20",
+                            "NDS"      => "none",
                             "Quantity" => 1,
                         ]
                     ]);
 
-                    if($payment_url) {
-                        $text = "Ссылка на оплату услуги: <a href='" . $payment_url . "'>$order->description</a>";
+                    if($payment_info["payment_url"]) {
+                        $text = "Ссылка на оплату услуги: <a href='" . $payment_info["payment_url"] . "'>$order->description</a>";
+
+                        $order->update([
+                            "payment_id" => $payment_info["payment_id"],
+                        ]);
 
                         if ($telegramBotService->sendMessage(
                             chat_id: $item->telegram_id,
@@ -101,7 +111,7 @@ class UpdateSubscriptionsUser
                             ]);
                         }
                     } else {
-                        Log::error($tinkoff->error);
+                        Log::error($tinkoffPaymentService->error);
                     }
                 }
             }

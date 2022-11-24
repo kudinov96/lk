@@ -88,7 +88,7 @@ class Period extends Model
 
     public function subscriptions(): BelongsToMany
     {
-        return $this->belongsToMany(Subscription::class, "period_subscription")->withPivot("price");
+        return $this->belongsToMany(Subscription::class, "period_subscription")->withPivot("price", "is_default");
     }
 
     public static function findByCountName($count, $count_name)

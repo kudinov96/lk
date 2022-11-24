@@ -22,6 +22,10 @@
             <label>
                 <input type="text" placeholder="Контактный телефон" name="phone" required>
             </label>
+            <label for="is_auto_renewal" class="form-field_checkbox">
+                <input type="checkbox" id="is_auto_renewal" placeholder="Автоплатеж" name="is_auto_renewal" checked>
+                <span>Автоплатеж</span>
+            </label>
 
             <input type="submit" value="Оплатить">
         </form>

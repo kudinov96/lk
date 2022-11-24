@@ -40,27 +40,35 @@
                                 <div class="form-group col-md-12">
                                     <div class="periods">
                                         <div class="row">
-                                            <div class="col-xs-4 mb-0">
+                                            <div class="col-xs-3 mb-0">
                                                 <label class="control-label">Период подписки</label>
                                             </div>
-                                            <div class="col-xs-4 mb-0">
+                                            <div class="col-xs-3 mb-0">
                                                 <label class="control-label">Цена за период</label><br>
+                                            </div>
+                                            <div class="col-xs-3 mb-0">
+                                                <label class="control-label">Период по умолчанию</label><br>
                                             </div>
                                         </div>
                                         <div class="periods__items" id="periods-items">
                                             <div class="periods__item">
                                                 <div class="row">
-                                                    <div class="col-xs-4 mb-10">
+                                                    <div class="col-xs-3 mb-10">
                                                         <select class="form-control select2 select2-hidden-accessible" id="period-count-name-0" name="periods[0][count_name]">
                                                             @foreach($periods as $period_item)
                                                                 <option value="{{ $period_item->full_count_name }}"> {{ $period_item->full_count_name_human }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-xs-4 mb-10">
+                                                    <div class="col-xs-3 mb-10">
                                                         <input class="form-control" type="number" min="0" name="periods[0][price]">
                                                     </div>
-                                                    <div class="col-xs-4 mb-10">
+                                                    <div class="col-xs-3 mb-10">
+                                                        <div class="period-default-toggle">
+                                                            <input type="checkbox" id="period-is-default-0" name="periods[0][is_default]" class="toggleswitch">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-3 mb-10">
                                                         <div class="btn btn-danger remove_period"><i class="voyager-trash"></i> Удалить</div>
                                                     </div>
                                                 </div>
@@ -127,7 +135,9 @@
             $('.toggleswitch').bootstrapToggle({
                 on: "Да",
                 off: "Нет",
-            }).change(function() {
+            });
+
+            $(".is-test").on("change", function(){
                 if ($(this).prop('checked')) {
                     $('.is-test').removeClass('hidden');
                     $('.is-not-test').addClass('hidden');
@@ -149,17 +159,22 @@
 
                 html = '<div class="periods__item">' +
                             '<div class="row">' +
-                                '<div class="col-xs-4 mb-10">' +
+                                '<div class="col-xs-3 mb-10">' +
                                     '<select class="form-control select2 select2-hidden-accessible" id="period-count-name-' + number + '" name="periods[' + number + '][count_name]">';
                                         $.each(periods, function(index, index_data) {
                                             html += '<option value="' + index_data.full_count_name + '">' + index_data.full_count_name_human + '</option>';
                                         });
                             html += '</select>' +
                                 '</div>' +
-                                '<div class="col-xs-4 mb-10">' +
+                                '<div class="col-xs-3 mb-10">' +
                                     '<input class="form-control" type="number" min="0" name="periods[' + number + '][price]">' +
                                 '</div>' +
-                                '<div class="col-xs-4 mb-10">' +
+                                '<div class="col-xs-3 mb-10">' +
+                                    '<div class="period-default-toggle">' +
+                                        '<input type="checkbox" id="period-is-default-' + number + '" name="periods[' + number + '][is_default]" class="toggleswitch">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-xs-3 mb-10">' +
                                     '<div class="btn btn-danger remove_period"><i class="voyager-trash"></i> Удалить</div>' +
                                 '</div>' +
                             '</div>' +
@@ -168,6 +183,10 @@
                 $("#periods-items").append(html);
                 $('#period-count-name-' + number).select2();
                 $('#period-count-name-' + number).select2();
+                $('#period-is-default-' + number).bootstrapToggle({
+                    on: "Да",
+                    off: "Нет",
+                });
                 $(this).data("number", number);
             });
 

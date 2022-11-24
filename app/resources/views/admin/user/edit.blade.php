@@ -100,7 +100,7 @@
                                                             <div class="btn btn-primary extend_subscription">Продлить</div>
                                                             <div class="user-page__subscriptions-auto">
                                                                 <span>Автопродление</span>
-                                                                <input type="checkbox" name="update_subscriptions[{{ $key }}][is_auto_renewal]" class="toggleswitch" @if($subscription->pivot->is_auto_renewal) checked @endif>
+                                                                <input type="checkbox" name="update_subscriptions[{{ $key }}][is_auto_renewal]" class="toggleswitch is-auto-renewal-toggle" @if($subscription->pivot->is_auto_renewal) checked @endif>
                                                             </div>
                                                             <div class="btn btn-danger remove_update_subscription"><i class="voyager-trash"></i> Удалить</div>
                                                         </div>
@@ -528,6 +528,13 @@
             });
 
             $(document).on("change", ".new-date-subscription", function() {
+                let $item  = $(this).closest(".user-page-update__subscription-item");
+                let number = $item.data("number");
+
+                $item.find('input[name="update_subscriptions[' + number + '][updated]"]').val(1);
+            });
+
+            $(document).on("change", ".is-auto-renewal-toggle", function() {
                 let $item  = $(this).closest(".user-page-update__subscription-item");
                 let number = $item.data("number");
 

@@ -13,11 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoff, UpdateUser $updateUser)
+    public function store(Request $request, CreateOrder $createOrder, TinkoffPaymentService $tinkoffPaymentService, UpdateUser $updateUser)
     {
-        $user         = auth()->user();
-        $service_type = $request->input("service_type");
-        $service      = app($service_type)::findOrFail($request->input("service_id"));
+        $user            = auth()->user();
+        $service_type    = $request->input("service_type");
+        $service         = app($service_type)::findOrFail($request->input("service_id"));
+        $is_auto_renewal = $request->input("is_auto_renewal") ? true : false;
 
         if ($service_type === Subscription::class) {
             $period = $service->periods()->where("id", $request->input("period_id"))->first();
@@ -43,6 +44,7 @@ class OrderController extends Controller
             "service_id"      => $request->input("service_id"),
             "service_type"    => $request->input("service_type"),
             "period_id"       => $request->input("period_id"),
+            "is_auto_renewal" => $is_auto_renewal,
         ]);
 
         $payment = [
@@ -50,6 +52,8 @@ class OrderController extends Controller
             "Amount"        => $order->amount,
             "Language"      => "ru",
             "Description"   => $order->description,
+            "Recurrent"     => "Y",
+            "CustomerKey"   => $user->id,
             "Email"         => $order->email,
             "Phone"         => $order->phone,
             "Name"          => $order->name,
@@ -59,24 +63,28 @@ class OrderController extends Controller
         $items[] = [
             "Name"     => $service->title,
             "Price"    => $order->amount,
-            "NDS"      => "vat20",
+            "NDS"      => "none",
             "Quantity" => 1,
         ];
 
-        $payment_url = $tinkoff->paymentURL($payment, $items);
+        $payment_info = $tinkoffPaymentService->paymentURL($payment, $items);
 
-        if(!$payment_url) {
-            Log::error($tinkoff->error);
+        if(!$payment_info["payment_url"]) {
+            Log::error($tinkoffPaymentService->error);
 
             return [
                 "success" => true,
-                "error"   => $tinkoff->error,
+                "error"   => $tinkoffPaymentService->error,
             ];
         }
 
+        $order->update([
+            "payment_id" => $payment_info["payment_id"],
+        ]);
+
         return [
             "success"     => true,
-            "payment_url" => $payment_url
+            "payment_url" => $payment_info["payment_url"],
         ];
     }
 }

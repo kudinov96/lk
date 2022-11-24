@@ -21,6 +21,8 @@ use Illuminate\Support\Str;
  * @property int    $service_id
  * @property int    $service_type
  * @property int    $period_id
+ * @property int    $payment_id
+ * @property bool   $is_auto_renewal
  *
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -29,6 +31,10 @@ use Illuminate\Support\Str;
 class Order extends Model
 {
     protected $table = "order";
+
+    protected $guarded = [
+        "id",
+    ];
 
     protected function user(): BelongsTo
     {
