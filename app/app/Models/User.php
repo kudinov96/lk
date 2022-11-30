@@ -73,6 +73,11 @@ class User extends \TCG\Voyager\Models\User
             ->withPivot("date_start", "date_end", "is_auto_renewal", "auto_renewal_try", "auto_renewal_try_date");
     }
 
+    public function subscriptionsActive(): BelongsToMany
+    {
+        return $this->subscriptions()->wherePivot("date_end", ">=", now());
+    }
+
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, "course_users")->withPivot("date_start");

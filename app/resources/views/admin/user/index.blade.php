@@ -80,7 +80,7 @@
                                                 {{ $user->name }} @if($user->telegram_name){!! "(<a href=\"https://t.me/{$user->telegram_name}\" target=\"_blank\">@" . $user->telegram_name . "</a>)" !!}@endif
                                             </td>
                                             <td class="user-subscriptions">
-                                                @foreach($user->subscriptions as $subscription)
+                                                @foreach($user->subscriptionsActive as $subscription)
                                                     <a href="{{ route("voyager.subscription.edit", ["id" => $subscription->id]) }}" class="user-subscriptions__item" style="background-color: {{ $subscription->color }}">{{ $subscription->title }}</a>
                                                 @endforeach
                                                 @if ($user->courses()->exists())
