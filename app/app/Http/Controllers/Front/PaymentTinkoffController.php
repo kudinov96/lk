@@ -69,7 +69,7 @@ class PaymentTinkoffController extends Controller
         if ($order->service_type === Subscription::class) {
             $period = Period::findOrFail($order->period_id);
 
-            if ($user->subscriptions()->where("id", $order->subscription_id)->exists()) {
+            if ($user->subscriptions()->where("id", $order->service_id)->exists()) {
                 $updateSubscriptions->handle($user, [
                     [
                         "id"              => $order->service_id,

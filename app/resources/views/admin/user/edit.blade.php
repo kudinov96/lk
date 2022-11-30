@@ -73,10 +73,10 @@
                                 <div class="col-xs-12">
                                     <h4>Подписки</h4>
 
-                                    @if($item->subscriptions)
+                                    @if($item->subscriptionsActive()->exists())
                                         <div class="form-group">
                                             <div class="user-page-update__subscriptions">
-                                                @foreach($item->subscriptions as $key => $subscription)
+                                                @foreach($item->subscriptionsActive as $key => $subscription)
                                                     <div class="user-page-update__subscription-item" data-number="{{ $key }}" data-subscription-id="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][id]" value="{{ $subscription->id }}">
                                                         <input type="hidden" name="update_subscriptions[{{ $key }}][updated]" value="0">

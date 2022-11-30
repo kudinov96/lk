@@ -40,7 +40,7 @@ class Subscription extends Model
 
     protected function daysLeftHuman(): Attribute
     {
-        $daysLeft = $this->pivot ? Carbon::parse($this->pivot->date_end)->diffInDays(now()) : null;
+        $daysLeft = $this->pivot ? Carbon::parse($this->pivot->date_end)->diffInDays(now()) + 1 : null;
 
         return Attribute::make(
             get: fn () => $daysLeft ? num_declension($daysLeft, ["остался", "осталось", "осталось"]) . " " . $daysLeft . " " . num_declension($daysLeft, ["день", "дня", "дней"]): null,
