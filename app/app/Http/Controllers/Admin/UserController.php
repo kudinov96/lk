@@ -268,6 +268,7 @@ class UserController extends VoyagerUserController
         )) {
             return [
                 "success" => false,
+            	'message' => !empty( $telegramBotService->last_response['description']) ? $telegramBotService->last_response['description'] : '',
             ];
         }
 

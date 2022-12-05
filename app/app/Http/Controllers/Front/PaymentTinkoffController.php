@@ -62,6 +62,11 @@ class PaymentTinkoffController extends Controller
         $order  = Order::findOrFail($request->OrderId);
         $user   = $order->user;
 
+        if($order->status === OrderStatus::CONFIRMED->value) {
+			return;
+		}
+		$this->sendFinStat($order);
+
         $updateOrder->handel($order, [
             "status" => OrderStatus::CONFIRMED->value,
         ]);
@@ -108,4 +113,24 @@ class PaymentTinkoffController extends Controller
             ]);
         }
     }
+	
+	private function sendFinStat(Order $order){
+		
+		if(!empty($order) && env('BOT_FIN_API_TOKEN')) {
+			$telegramBotFin = new TelegramBotService(
+                api_token: env('BOT_FIN_API_TOKEN'),
+            );
+			
+			$telegramBotFin->sendMessage(
+				chat_id: env('BOT_FIN_GROUP'),
+				text: implode("\n", [
+					$order->description,
+					"",
+					$order->name,
+					$order->email,
+					$order->phone,					
+				]),
+			);
+		}		
+	}
 }

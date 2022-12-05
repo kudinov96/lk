@@ -28,11 +28,12 @@ class TelegramBotService
 
     public function sendMessage(int $chat_id, string $text): bool
     {
-        return Http::post($this->generateLink("sendMessage"), [
+        $this->last_response = Http::timeout(2)->post($this->generateLink("sendMessage"), [
             'chat_id' => $chat_id,
             'text' => $text,
             'parse_mode' => 'HTML',
-        ])->successful();
+        ])->json();
+		return !empty($this->last_response) && !empty($this->last_response['ok']);
     }
 
     public function getUserProfilePhotos(int $user_id, int $limit = 1): array

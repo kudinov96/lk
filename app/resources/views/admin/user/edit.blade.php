@@ -592,7 +592,7 @@
 
                             $textarea.val("");
                             if (response.success === false) {
-                                $("#telegram-chat-block").append("<p class='error'>Сообщение не может быть доставлено</p>");
+                                $("#telegram-chat-block").append("<p class='error'>Сообщение не может быть доставлено. " + (typeof response.message !== 'undefined' ? response.message : '') + "</p>");
                             }
                         },
                     });

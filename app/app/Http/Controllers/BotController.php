@@ -59,9 +59,10 @@ class BotController extends Controller
         $user_lastname      = $request->input("message.from.last_name") ?? "";
 
         $user               = User::query()
-            ->where("telegram_id", $user_telegram_id)
-            ->orWhere("telegram_name", $user_telegram_name)
-            ->first();
+            ->where("telegram_id", $user_telegram_id);
+		if(!empty($user_telegram_name))
+            $user->orWhere("telegram_name", $user_telegram_name);
+        $user = $user ->first();
 
         if ($user) {
             if (!$user->telegram_id) {

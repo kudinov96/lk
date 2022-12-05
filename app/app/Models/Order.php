@@ -30,7 +30,7 @@ use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    protected $table = "order";
+    protected $table = "orders";
 
     protected $guarded = [
         "id",
