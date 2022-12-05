@@ -16,14 +16,14 @@ class TelegramBotService
 
     public function setWebhook(string $url): array
     {
-        return Http::get($this->generateLink("setWebhook"), [
+        return Http::timeout(2)->get($this->generateLink("setWebhook"), [
             "url" => $url,
         ])->json();
     }
 
     public function getWebhookInfo(): array
     {
-        return Http::post($this->generateLink("getWebhookInfo"))->json();
+        return Http::timeout(2)->post($this->generateLink("getWebhookInfo"))->json();
     }
 
     public function sendMessage(int $chat_id, string $text): bool
@@ -38,7 +38,7 @@ class TelegramBotService
 
     public function getUserProfilePhotos(int $user_id, int $limit = 1): array
     {
-        return Http::post($this->generateLink("getUserProfilePhotos"), [
+        return Http::timeout(2)->post($this->generateLink("getUserProfilePhotos"), [
             'user_id' => $user_id,
             'limit'   => $limit,
         ])->json();
