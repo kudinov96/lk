@@ -29,7 +29,7 @@ class OrderController extends Controller
 
         $updateUser->handle($user, [
             "fio"   => $request->input("name"),
-            "email" => $request->input("email"),
+            // "email" => $request->input("email"), // платежные данные не должны записываться в уникальное идентификационное поле 
             "phone" => $request->input("phone"),
         ]);
 
